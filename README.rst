@@ -14,9 +14,8 @@ version control systems.
 The goal of the project is to provide reasonable defaults and an easy way to
 customize how version numbers are generated from version control system.
 
-The code is in currently on *beta* level meaning the implementation and public
-API might change considerably but unless there is no compelling reason the API
-is kept backward-compatible.
+The code is currently considered stable and ready for production use. The API
+should not change in such way that the change would break current usage.
 
 Usage
 =====
