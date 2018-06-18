@@ -1,4 +1,3 @@
-import copy
 import os
 import subprocess
 import unittest
@@ -25,7 +24,7 @@ class GitTests(tests.AutoverVcsTestsMixin, unittest.TestCase):
 
         self._run_git('add', 'dummy.txt')
 
-        environ = copy.copy(os.environ)
+        environ = os.environ.copy()
         environ['GIT_AUTHOR_NAME'] = 'Setuptools Autover Test'
         environ['EMAIL'] = 'autover@example.com'
 
