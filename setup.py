@@ -4,7 +4,7 @@ import setuptools_autover
 
 
 setuptools.setup(
-    name="setuptools_autover",
+    name='setuptools_autover',
     version=setuptools_autover.get_version(),
     description='Automatic package version numbering from version control',
     url='https://github.com/jannero/setuptools_autover',
