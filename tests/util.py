@@ -13,7 +13,7 @@ def run(*cmd, **kwargs):
     return setuptools_autover.run.run(cmd, **kwargs)
 
 
-class Venv(object):
+class Venv:
     def __init__(self, path):
         super().__init__()
 

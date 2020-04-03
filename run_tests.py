@@ -22,7 +22,7 @@ def main():
     loop.run_until_complete(run())
 
 
-class Runner(object):
+class Runner:
     def __init__(self):
         super().__init__()
 

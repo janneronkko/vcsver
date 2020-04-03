@@ -1,7 +1,7 @@
 from unittest import mock
 
 
-class MockMixin(object):
+class MockMixin:
     def mock(self, *args, **kwargs):
         return mock.Mock(*args, **kwargs)
 

@@ -13,7 +13,7 @@ TEMPLATE_DIR = os.path.dirname(__file__)
 AUTOVER_ROOT_DIR = os.path.dirname(TEMPLATE_DIR)
 
 
-class AutoverTestsMixin(object):
+class AutoverTestsMixin:
     PKG_NAME = 'testpkg'
 
     @classmethod

@@ -5,7 +5,7 @@ from . import run
 from . import types
 
 
-class GitRevisionInfoReader(object):
+class GitRevisionInfoReader:
     def __init__(self, path=None):
         super().__init__()
 
