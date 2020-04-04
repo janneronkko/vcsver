@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 
 from . import errors
 from . import git
@@ -22,7 +22,7 @@ def handle_use_autover(dist, attr, value): # pylint: disable=unused-argument
 def handle_version(dist, attr, value): # pylint: disable=unused-argument
     user_config = dist.use_autover
 
-    if not isinstance(user_config, collections.Mapping):
+    if not isinstance(user_config, collections.abc.Mapping):
         if not user_config:
             return
 
