@@ -29,8 +29,9 @@ class AutoverTestsMixin:
                 cwd=AUTOVER_ROOT_DIR,
             )
 
-        finally:
+        except Exception:
             cls.venv_temp_dir.cleanup()
+            raise
 
     @classmethod
     def tearDownClass(cls): # pylint: disable=invalid-name
