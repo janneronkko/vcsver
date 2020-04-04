@@ -16,14 +16,15 @@ setuptools.setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: System :: Archiving :: Packaging',
     ],
     keywords='setuptools development git version',
     packages=['setuptools_autover'],
-    python_requires='>=3.4',
+    python_requires='>=3.5',
     entry_points={
         'distutils.setup_keywords': [
             'version = setuptools_autover.autover:handle_version',
