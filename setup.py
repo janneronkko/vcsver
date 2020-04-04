@@ -9,7 +9,7 @@ setuptools.setup(
     description='Automatic package version numbering from version control',
     url='https://github.com/jannero/setuptools_autover',
     author='Janne Rönkkö',
-    author_email='jroo@iki.fi',
+    author_email='janne.ronkko@iki.fi',
     license='MIT',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
