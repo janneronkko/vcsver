@@ -24,8 +24,6 @@ class TestCreateVersionPostWithDev(unittest.TestCase):
             with self.subTest(data):
                 version = self.create_version_string(data)
 
-                self.assertIsInstance(pkg_resources.parse_version(version), pkg_resources.SetuptoolsVersion)
-
                 self.assertEqual(version, expected_version)
 
 
@@ -45,9 +43,6 @@ class VersionComparisonAssumptionsTest(unittest.TestCase):
             with self.subTest(prev_version=prev_version, curr_version=curr_version):
                 ver1 = pkg_resources.parse_version(prev_version)
                 ver2 = pkg_resources.parse_version(curr_version)
-
-                self.assertIsInstance(ver1, pkg_resources.SetuptoolsVersion)
-                self.assertIsInstance(ver2, pkg_resources.SetuptoolsVersion)
 
                 self.assertLess(ver1, ver2)
 

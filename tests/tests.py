@@ -153,8 +153,6 @@ class AutoverVcsTestsMixin(AutoverTestsMixin):
                 self.commits_since_latest_tag,
             )
 
-        self.assertIsInstance(setup_py_version, pkg_resources.SetuptoolsVersion)
-
         self.assertEqual(setup_py_version.public, expected_public_version)
 
         if setup_py_version.local is not None:
