@@ -203,7 +203,8 @@ Types
   - **distance**: Number of commits since the most recent tag (0 if current revision is tagged)
   - **commit**: Commit identifier for current revision
   - **dirty**: Is the source tree dirty (not exactly the same as the code in the current revision).
-    If *latest_tag* is *None* the source tree is assumed to be dirty.
+    If there is no commits, the *lastest_tag* and *commit* should be :code:`None` and dirty should be
+    set to :code:`True`
 
 **setuptools_autover.VersionInfo**
   Named tuple containing version info:
