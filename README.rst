@@ -93,13 +93,10 @@ Configuration
 The *use_autover* argument can be used for configuring version generation behaviour
 by proving the configuration as mapping.
 
-.. role: python(code)
-  :language: python
-
 **root_version**
   If repository does not contain any tags, this string is used.
 
-  Default value: :python:`'0'`
+  Default value: :code:`'0'`
 
 **read_revision_info**
   Callable used for reading revision information from VCS (or other source).
@@ -107,7 +104,7 @@ by proving the configuration as mapping.
   The function should not take any arguments and should return instance of *setuptools_autover.RevisionInfo*
   or None in case revision info is not available.
 
-  By default *setuptools_autover.GitRevisionInfoReader* instance with default arguments is used.
+  By default :code:`setuptools_autover.GitRevisionInfoReader` instance with default arguments is used.
 
 **parse_tag**
   Function parsing version string from a tag.
@@ -115,14 +112,14 @@ by proving the configuration as mapping.
   The function takes one string argument (the tag) and returns version extracted from
   the tag as string
 
-  Default value: :python:`lambda tag: tag`
+  Default value: :code:`lambda tag: tag`
 
 **create_version**
   Function creating version string from *setuptools_autover.VersionInfo*.
 
   The function takes one argument of type *setuptools_autover.VersionInfo*. 
 
-  Default value: :python:`setuptools_autover.pep440.create_post_with_dev`
+  Default value: :code:`setuptools_autover.pep440.create_post_with_dev`
 
 Configuration matching the default settings:
 
@@ -155,13 +152,13 @@ Functions
 
   The version is created using the following rules:
 
-  - :python:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
+  - :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
       Released version
-  - :python:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
+  - :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
       Released version with modified source tree
-  - :python:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post0.dev{distance}+{commit}`
+  - :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post0.dev{distance}+{commit}`
       Released version
-  - :python:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post0.dev{distance}+{commit}-dirty`
+  - :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post0.dev{distance}+{commit}-dirty`
       Released version with modified source tree
 
 Classes
@@ -177,7 +174,7 @@ Constructor arguments:
 **path**
   Path to repository root. If *None*, current working directory is used.
 
-  Default value: :python:`None`
+  Default value: :code:`None`
 
 Members:
 
