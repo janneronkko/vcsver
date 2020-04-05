@@ -3,10 +3,15 @@ import setuptools
 import setuptools_autover
 
 
+with open('README.rst', 'rt') as readme_file:
+    long_desc = readme_file.read()
+
 setuptools.setup(
     name='setuptools_autover',
     version=setuptools_autover.get_version(),
     description='Automatic package version numbering from version control',
+    long_description=long_desc,
+    long_description_content_type='text/x-rst',
     url='https://github.com/jannero/setuptools_autover',
     author='Janne Rönkkö',
     author_email='janne.ronkko@iki.fi',
