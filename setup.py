@@ -12,7 +12,7 @@ setuptools.setup(
     description='Automatic package version numbering from version control',
     long_description=long_desc,
     long_description_content_type='text/x-rst',
-    url='https://github.com/jannero/setuptools_autover',
+    url='https://github.com/janneronkko/setuptools_autover',
     author='Janne Rönkkö',
     author_email='janne.ronkko@iki.fi',
     license='MIT',
