@@ -24,14 +24,7 @@ class GitTests(tests.AutoverVcsTestsMixin, unittest.TestCase):
 
         self._run_git('add', 'dummy.txt')
 
-        environ = os.environ.copy()
-        environ['GIT_AUTHOR_NAME'] = 'Setuptools Autover Test'
-        environ['EMAIL'] = 'autover@example.com'
-
-        self._run_git(
-            'commit', '-m', 'Dummy change {}'.format(change_number),
-            env=environ,
-        )
+        self._run_git('commit', '-m', 'Dummy change {}'.format(change_number))
 
     def create_tag(self, tag_name):
         super().create_tag(tag_name)
@@ -47,5 +40,12 @@ class GitTests(tests.AutoverVcsTestsMixin, unittest.TestCase):
     def _run_git(self, *args, **kwargs):
         kwargs['cwd'] = self.repo_dir
         kwargs['check'] = True
+
+        environ = kwargs.get('env') or os.environ.copy()
+        environ['GIT_AUTHOR_NAME'] = 'Setuptools Autover Test'
+        environ['GIT_AUTHOR_EMAIL'] = 'autover@example.com'
+        environ['GIT_COMMITTER_NAME'] = 'Setuptools Autover Test'
+        environ['GIT_COMMITTER_EMAIL'] = 'autover@example.com'
+        kwargs['env'] = environ
 
         return util.run('git', *args, **kwargs)

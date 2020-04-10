@@ -60,7 +60,6 @@ class Runner:
         process = await asyncio.create_subprocess_exec(
             'docker', 'run',
             '--rm',
-            '-e', 'EMAIL=Author <author@example.org>',
             '-v', f'{this_dir}:/autover',
             f'python:{python_version}-alpine',
             'sh', '-c', _TEST_SCRIPT,
