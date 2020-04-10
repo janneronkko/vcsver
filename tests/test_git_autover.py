@@ -9,6 +9,9 @@ from . import tests
 class GitTests(tests.AutoverVcsTestsMixin, unittest.TestCase):
     def init_repo(self, repo_dir):
         self._run_git('init', repo_dir)
+        # If GPG sign is enabled, committing fails because there is no
+        # GPG keys for the used test email addresses.
+        self._run_git('config', 'commit.gpgsign', 'false')
 
     def assert_local_part_matches(self, local_part):
         self.assertTrue(self._get_head_sha().startswith(local_part))
