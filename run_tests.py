@@ -5,12 +5,12 @@ import os
 import signal
 
 
-SUPPORTED_PYTHON_VERSIONS = (
-    '3.5',
-    '3.6',
-    '3.7',
-    '3.8',
-)
+SUPPORTED_PYTHON_VERSIONS = {
+    '3.5': 'py35',
+    '3.6': 'py36',
+    '3.7': 'py37',
+    '3.8': 'py38',
+}
 
 
 def main():
@@ -37,8 +37,8 @@ class Runner:
 
     async def __call__(self):
         tasks = [
-            self._run_tests(python_version)
-            for python_version in SUPPORTED_PYTHON_VERSIONS
+            self._run_tests(python_version, tox_env)
+            for python_version, tox_env in SUPPORTED_PYTHON_VERSIONS.items()
         ]
 
         results = await asyncio.gather(*tasks)
@@ -50,7 +50,7 @@ class Runner:
                     for line in stdout.split('\n'):
                         print(f'> {line}')
 
-    async def _run_tests(self, python_version):
+    async def _run_tests(self, python_version, tox_env):
         print(f'Running tests with Python {python_version}')
 
         this_dir = os.path.dirname(__file__)
@@ -62,7 +62,9 @@ class Runner:
             '--rm',
             '-v', f'{this_dir}:/autover',
             f'python:{python_version}-alpine',
-            'sh', '-c', _TEST_SCRIPT,
+            'sh', '-c', _TEST_SCRIPT.format(
+                tox_env=tox_env,
+            ),
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
         )
@@ -87,9 +89,10 @@ _TEST_SCRIPT = '''
 set -e
 
 apk add --update git
+pip install tox
 cd /autover
 adduser -D -u $(stat -c %g setup.py) user
-su user -c "python -m unittest discover -v"
+su user -c "tox -e {tox_env}"
 '''
 
 if __name__ == '__main__':

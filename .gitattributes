@@ -1,3 +1,4 @@
+*.ini             text
 *.py              text
 
 .gitattributes    text
