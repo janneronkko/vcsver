@@ -4,7 +4,7 @@ import setuptools_autover
 
 
 with open('README.rst', 'rt') as readme_file:
-    long_desc = readme_file.read()
+    long_desc = readme_file.read()  # pylint: disable=invalid-name
 
 setuptools.setup(
     name='setuptools_autover',

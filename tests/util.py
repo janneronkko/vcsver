@@ -1,7 +1,7 @@
 import subprocess
 
 import setuptools_autover.run
-from setuptools_autover.run import CalledProcessError # pylint: disable=unused-import
+from setuptools_autover.run import CalledProcessError  # pylint: disable=unused-import
 
 
 def run(*cmd, **kwargs):

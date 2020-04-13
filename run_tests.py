@@ -93,7 +93,7 @@ class Runner:
 
         self._processes[process.pid] = process
 
-        stdout, stderr = await process.communicate() # pylint: disable=unused-variable
+        stdout, stderr = await process.communicate()  # pylint: disable=unused-variable
 
         del self._processes[process.pid]
 

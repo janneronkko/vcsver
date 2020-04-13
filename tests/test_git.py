@@ -4,25 +4,11 @@ import subprocess
 from . import util
 
 
-class Vcs:
+class Git:
     def __init__(self, repo_dir):
         super().__init__()
 
         self.repo_dir = repo_dir
-
-    def initialize(self):
-        pass
-
-    def create_commit(self):
-        raise NotImplementedError()
-
-    def create_tag(self, tag_name):
-        raise NotImplementedError()
-
-
-class Git(Vcs):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
 
         self._run_git('init', self.repo_dir)
 
@@ -73,7 +59,7 @@ class Git(Vcs):
         return util.run('git', *args, **kwargs)
 
 
-def test_vcs(test_project):
+def test_initial_history_without_tags(test_project):
     vcs = Git(test_project.path)
 
     test_project.assert_current_version('{}+dirty'.format(test_project.root_version))
@@ -94,6 +80,13 @@ def test_vcs(test_project):
             vcs.get_local_version_string(),
         ),
     )
+
+
+def test_history_with_tags(test_project):
+    vcs = Git(test_project.path)
+
+    vcs.create_commit()
+    vcs.create_commit()
 
     vcs.create_tag('1.0')
     test_project.assert_current_version('1.0')

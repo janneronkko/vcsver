@@ -1,0 +1,4 @@
+packaging
+pytest
+pytest-mock
+pytest-subprocess
