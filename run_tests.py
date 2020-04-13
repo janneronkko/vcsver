@@ -1,5 +1,6 @@
 #! /usr/bin/env python3
 
+import argparse
 import asyncio
 import os
 import signal
@@ -14,13 +15,34 @@ SUPPORTED_PYTHON_VERSIONS = {
 
 
 def main():
+    args = parse_args()
+
     loop = asyncio.get_event_loop()
 
     run = Runner()
 
     loop.add_signal_handler(signal.SIGINT, run.terminate)
 
-    loop.run_until_complete(run())
+    versions = SUPPORTED_PYTHON_VERSIONS
+    if args.versions:
+        versions = {
+            key: value
+            for key, value in SUPPORTED_PYTHON_VERSIONS.items()
+            if key in args.versions
+        }
+
+    loop.run_until_complete(run(versions))
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument(
+        'versions',
+        nargs='*',
+    )
+
+    return parser.parse_args()
 
 
 class Runner:
@@ -35,10 +57,10 @@ class Runner:
         for process in self._processes.values():
             process.send_signal(signal.SIGKILL)
 
-    async def __call__(self):
+    async def __call__(self, versions):
         tasks = [
             self._run_tests(python_version, tox_env)
-            for python_version, tox_env in SUPPORTED_PYTHON_VERSIONS.items()
+            for python_version, tox_env in versions.items()
         ]
 
         results = await asyncio.gather(*tasks)
