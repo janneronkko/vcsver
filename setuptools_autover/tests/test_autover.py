@@ -1,194 +1,171 @@
 import collections
-import unittest
 
-from . import helpers
+import pytest
+
 from .. import autover
 from .. import errors
 from .. import types
 
 
-class HandleVersionTest(unittest.TestCase, helpers.MockMixin):
-    def setUp(self):
-        super().setUp()
+@pytest.mark.parametrize(
+    ('use_autover', 'expected_version'),
+    (
+        (None, None),
+        (True, '1.2.3'),
+        ({}, '1.2.3'),
+        ({'root_version': '1.0'}, '1.2.3'),
+    ),
+)
+def test_handle_version(
+    mocker,
+    use_autover,
+    expected_version,
+):
+    get_version_mock = mocker.patch(
+        'setuptools_autover.autover.get_version',
+        return_value='1.2.3',
+    )
 
-        self.get_version_mock = self.patch(
-            '{}.get_version'.format(autover.__name__),
-            return_value=self.sentinel.version,
-        )
+    dist_mock = mocker.Mock(name='Dist')
+    dist_mock.use_autover = use_autover
+    dist_mock.metadata.version = None
 
-        self.dist_mock = self.mock(name='Dist')
-        self.dist_mock.use_autover = True
-        self.dist_mock.metadata.version = None
+    autover.handle_version(
+        dist_mock,
+        mocker.sentinel.attr,
+        mocker.sentinel.value,
+    )
 
-    def test_disabled(self):
-        self.dist_mock.use_autover = None
-        autover.handle_version(self.dist_mock, self.sentinel.attr, self.sentinel.value)
+    assert dist_mock.metadata.version == expected_version
 
-        self.assertIsNone(self.dist_mock.metadata.version)
-        self.assertFalse(self.get_version_mock.called)
+    if use_autover is None:
+        assert not get_version_mock.called
+        return
 
-    def test_use_autover_set_to_true(self):
-        autover.handle_version(self.dist_mock, self.sentinel.attr, self.sentinel.value)
-
-        self.assertIs(self.dist_mock.metadata.version, self.sentinel.version)
-
-        self.get_version_mock.assert_called_once_with(**autover.DEFAULT_CONFIG)
-
-    def test_empty_user_config(self):
-        self.dist_mock.use_autover = {}
-        autover.handle_version(self.dist_mock, self.sentinel.attr, self.sentinel.value)
-
-        self.assertIs(self.dist_mock.metadata.version, self.sentinel.version)
-
-        self.get_version_mock.assert_called_once_with(**autover.DEFAULT_CONFIG)
-
-    def test_user_config(self):
-        self.dist_mock.use_autover = {
-            'root_version': '1.0',
-        }
-        autover.handle_version(self.dist_mock, self.sentinel.attr, self.sentinel.value)
-
-        self.assertIs(self.dist_mock.metadata.version, self.sentinel.version)
-
-        self.get_version_mock.assert_called_once_with(
-            root_version='1.0',
-            **{key: value for key, value in autover.DEFAULT_CONFIG.items() if key not in self.dist_mock.use_autover}
-        )
-
-
-class ConfigToGetVersionKwargsTest(unittest.TestCase, helpers.MockMixin):
-    def test_empty_config(self):
-        self.assertEqual(
-            autover.config_to_get_version_kwargs({}),
+    if isinstance(use_autover, dict):
+        expected_get_version_call_kwargs = collections.ChainMap(
+            use_autover,
             autover.DEFAULT_CONFIG,
         )
 
-    def test_custom_config(self):
-        custom_config = {
+    else:
+        expected_get_version_call_kwargs = autover.DEFAULT_CONFIG
+
+    get_version_mock.assert_called_once_with(**expected_get_version_call_kwargs)
+
+
+def test_config_to_get_version_kwargs():
+    assert autover.config_to_get_version_kwargs({}) == autover.DEFAULT_CONFIG
+
+    custom_config = {
+        'root_version': '1.0',
+    }
+    assert autover.config_to_get_version_kwargs(custom_config) == collections.ChainMap(
+        custom_config,
+        autover.DEFAULT_CONFIG,
+    )
+
+    with pytest.raises(errors.InvalidConfigError) as excinfo:
+        autover.config_to_get_version_kwargs({
+            'unknown_item': 1,
             'root_version': '1.0',
-        }
+        })
 
-        self.assertEqual(
-            autover.config_to_get_version_kwargs(custom_config),
-            collections.ChainMap(
-                custom_config,
-                autover.DEFAULT_CONFIG,
-            ),
-        )
-
-    def test_unknown_item(self):
-        self.assertRaises(
-            errors.InvalidConfigError,
-            autover.config_to_get_version_kwargs,
-            {'unknown_item': 1},
-        )
+    assert excinfo.value.invalid_items == {'unknown_item': 1}
 
 
-class GetVersionTest(unittest.TestCase, helpers.MockMixin):
-    def setUp(self):
-        super().setUp()
+@pytest.mark.parametrize(
+    ('latest_tag', 'latest_version'),
+    (
+        ('tag-1.0', '1.0'),
+        (None, None),
+    ),
+)
+def test_get_version_from_vcs(
+    mocker,
+    latest_tag,
+    latest_version,
+):
+    parse_tag_mock = mocker.Mock(
+        return_value=latest_version,
+    )
 
-        self.root_version = self.sentinel.root_version
+    create_version_mock = mocker.Mock(
+        return_value=mocker.sentinel.version,
+    )
 
-        self.read_revision_info_mock = self.mock(
-            return_value=types.RevisionInfo(
-                latest_tag=self.sentinel.latest_tag,
-                distance=0,
-                commit=self.sentinel.commit,
-                dirty=False,
-            ),
-        )
+    parse_pkg_info_file_mock = mocker.patch(
+        'setuptools_autover.util.parse_pkg_info_file',
+        return_value={
+            'Version': mocker.sentinel.pkg_info_version,
+        },
+    )
 
-        self.parse_tag_mock = self.mock(
-            return_value=self.sentinel.latest_version,
-        )
-
-        self.create_version_mock = self.mock(
-            return_value=self.sentinel.version,
-        )
-
-        self.parse_pkg_info_file_mock = self.patch(
-            'setuptools_autover.util.parse_pkg_info_file',
-            return_value={
-                'Version': self.sentinel.pkg_info_version,
-            },
-        )
-
-    def _get_version(self):
-        return autover.get_version(
-            root_version=self.root_version,
-            read_revision_info=self.read_revision_info_mock,
-            parse_tag=self.parse_tag_mock,
-            create_version=self.create_version_mock,
-        )
-
-    def test_existing_version_info_using_callable(self):
-        version = self._get_version()
-        self.assertEqual(version, self.sentinel.version)
-
-        self.read_revision_info_mock.assert_called_once_with()
-
-        self.parse_tag_mock.assert_called_once_with(self.sentinel.latest_tag)
-
-        self.create_version_mock.assert_called_once_with(unittest.mock.ANY)
-
-        self.assertFalse(self.parse_pkg_info_file_mock.called)
-
-    def test_no_tags(self):
-        self.read_revision_info_mock.return_value = types.RevisionInfo(
-            latest_tag=None,
-            distance=10,
-            commit=self.sentinel.commit,
+    version = autover.get_version(
+        root_version=mocker.sentinel.root_version,
+        read_revision_info=lambda: types.RevisionInfo(
+            latest_tag=latest_tag,
+            distance=0,
+            commit=mocker.sentinel.commit,
             dirty=False,
+        ),
+        parse_tag=parse_tag_mock,
+        create_version=create_version_mock,
+    )
+
+    assert version == mocker.sentinel.version
+
+    if latest_tag is None:
+        assert not parse_tag_mock.called
+
+    else:
+        parse_tag_mock.assert_called_once_with(latest_tag)
+
+    create_version_mock.assert_called_once_with(
+        types.VersionInfo(
+            latest_release=latest_version or mocker.sentinel.root_version,
+            distance=0,
+            commit=mocker.sentinel.commit,
+            dirty=False,
+        ),
+    )
+    assert not parse_pkg_info_file_mock.called
+
+
+@pytest.mark.parametrize(
+    'pkg_info_result',
+    (
+        {'Version': '1.5.9'},
+        FileNotFoundError('pkg-info file not found'),
+        PermissionError('no read permission to file'),
+    ),
+)
+def test_get_version_from_pkg_info_file(
+    mocker,
+    pkg_info_result,
+):
+    parse_pkg_info_file_mock = mocker.patch(
+        'setuptools_autover.util.parse_pkg_info_file',
+    )
+
+    expecting_version = not isinstance(pkg_info_result, Exception)
+    if expecting_version:
+        parse_pkg_info_file_mock.return_value = pkg_info_result
+
+    else:
+        parse_pkg_info_file_mock.side_effect = pkg_info_result
+
+    try:
+        version = autover.get_version(
+            root_version=mocker.sentinel.root_version,
+            read_revision_info=lambda: None,
+            parse_tag=None,
+            create_version=None,
         )
+        assert version == '1.5.9'
+        assert expecting_version
 
-        version = self._get_version()
-        self.assertEqual(version, self.sentinel.version)
+    except errors.RevisionInfoNotFoundError:
+        assert not expecting_version
 
-        self.read_revision_info_mock.assert_called_once_with()
-
-        self.assertFalse(self.parse_tag_mock.called)
-
-        self.create_version_mock.assert_called_once_with(unittest.mock.ANY)
-
-        self.assertFalse(self.parse_pkg_info_file_mock.called)
-
-    def test_no_revision_info_available(self):
-        self.read_revision_info_mock.return_value = None
-
-        self.parse_pkg_info_file_mock.side_effect = FileNotFoundError
-
-        self.assertRaises(
-            errors.RevisionInfoNotFoundError,
-            self._get_version,
-        )
-
-        self.assertTrue(self.read_revision_info_mock.called)
-
-        self.assertFalse(self.parse_tag_mock.called)
-
-        self.assertFalse(self.create_version_mock.called)
-
-        self.parse_pkg_info_file_mock.assert_called_once_with('PKG-INFO')
-
-    def test_revision_info_from_pkg_info_file(self):
-        self.read_revision_info_mock.return_value = None
-
-        version = self._get_version()
-        self.assertEqual(version, self.sentinel.pkg_info_version)
-
-        self.parse_pkg_info_file_mock.assert_called_once_with('PKG-INFO')
-
-    def test_invalid_read_revision_info_argument(self):
-        self.read_revision_info_mock = self.sentinel.read_revision_info
-
-        self.assertRaises(
-            TypeError,
-            self._get_version,
-        )
-
-        self.assertFalse(self.parse_tag_mock.called)
-
-        self.assertFalse(self.create_version_mock.called)
-
-        self.assertFalse(self.parse_pkg_info_file_mock.called)
+    parse_pkg_info_file_mock.assert_called_once_with('PKG-INFO')

@@ -1,49 +1,46 @@
-import unittest
-
-import pkg_resources
+from packaging.version import (
+    parse as parse_version,
+    Version,
+)
+import pytest
 
 from .. import pep440
-from .. import types
+from ..types import VersionInfo
 
 
-class TestCreateVersionPostWithDev(unittest.TestCase):
-    def setUp(self):
-        super().setUp()
-
-        self.create_version_string = pep440.create_post_with_dev
-
-    def test_version_string_generation(self):
-        ver = types.VersionInfo
-
-        for data, expected_version in (
-            (ver(latest_release='1.0', distance=0, commit='abcdef', dirty=False), '1.0'),
-            (ver(latest_release='1.0', distance=0, commit='abcdef', dirty=True), '1.0+dirty'),
-            (ver(latest_release='1.0', distance=1, commit='abcdef', dirty=False), '1.0.post0.dev1+abcdef'),
-            (ver(latest_release='1.0', distance=1, commit='abcdef', dirty=True), '1.0.post0.dev1+abcdef.dirty'),
-        ):
-            with self.subTest(data):
-                version = self.create_version_string(data)
-
-                self.assertEqual(version, expected_version)
+@pytest.mark.parametrize(
+    ('version_info', 'expected_version_string'),
+    (
+        (VersionInfo(latest_release='1.0', distance=0, commit='abcdef', dirty=False), '1.0'),
+        (VersionInfo(latest_release='1.0', distance=0, commit='abcdef', dirty=True), '1.0+dirty'),
+        (VersionInfo(latest_release='1.0', distance=1, commit='abcdef', dirty=False), '1.0.post0.dev1+abcdef'),
+        (VersionInfo(latest_release='1.0', distance=1, commit='abcdef', dirty=True), '1.0.post0.dev1+abcdef.dirty'),
+    ),
+)
+def test_pep440_post_with_dev(version_info, expected_version_string):
+    assert pep440.create_post_with_dev(version_info) == expected_version_string
 
 
-class VersionComparisonAssumptionsTest(unittest.TestCase):
-    def test_assumptions(self):
-        versions = iter((
-            '1.0',
-            '1.0.post0.dev1',
-            '1.1.dev0',
-            '1.1',
-            '1.1+dirty',
-            '1.1.post0.dev1+abcdef.dirty',
-        ))
+_VERSIONS = (
+    '1.0',
+    '1.0.post0.dev1',
+    '1.1.dev0',
+    '1.1',
+    '1.1+dirty',
+    '1.1.post0.dev1+abcdef.dirty',
+)
 
-        prev_version = next(versions)
-        for curr_version in versions:
-            with self.subTest(prev_version=prev_version, curr_version=curr_version):
-                ver1 = pkg_resources.parse_version(prev_version)
-                ver2 = pkg_resources.parse_version(curr_version)
 
-                self.assertLess(ver1, ver2)
+@pytest.mark.parametrize(
+    ('prev_version', 'next_version'),
+    list(zip(_VERSIONS, _VERSIONS[1:])),
+)
+def test_version_ordering(prev_version, next_version):
+    prev_version = parse_version(prev_version)
+    assert isinstance(prev_version, Version)
 
-            prev_version = curr_version
+    next_version = parse_version(next_version)
+    assert isinstance(next_version, Version)
+
+    # Make sure that the version strings generated match the ordering used by packaging library
+    assert prev_version < next_version
