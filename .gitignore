@@ -1,8 +1,10 @@
 /*.egg-info
 /.coverage
+/.coverage.*
 /.tox
 /build
 /coverage
 /dist
+/reports
 /venv
 __pycache__

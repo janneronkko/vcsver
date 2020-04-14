@@ -3,6 +3,7 @@
 *.py              text
 *.txt             text
 
+.coveragerc       text
 .gitattributes    text
 .gitignore        text
 pylintrc          text
