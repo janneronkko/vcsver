@@ -5,6 +5,8 @@
 #    pip-compile --output-file=requirements/pytest.txt requirements/pytest.in
 #
 attrs==19.3.0             # via pytest
+mako==1.1.2               # via -r requirements/pytest.in
+markupsafe==1.1.1         # via mako
 more-itertools==8.2.0     # via pytest
 packaging==20.3           # via -r requirements/pytest.in, pytest
 pluggy==0.13.1            # via pytest

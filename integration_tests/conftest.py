@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 
+import mako.template
 import packaging
 import pytest
 
@@ -128,11 +129,15 @@ def test_project(tmpdir, virtualenv):  # pylint: disable=redefined-outer-name
     os.mkdir(project_dir)
 
     for file_name in ('setup.py', 'testpkg.py'):
-        with open(os.path.join(TEMPLATE_DIR, '{}.tmpl'.format(file_name)), 'rt') as tmpl_file:
-            tmpl = tmpl_file.read()
+        template = mako.template.Template(
+            filename=os.path.join(TEMPLATE_DIR, '{}.tmpl'.format(file_name)),
+        )
 
-        contents = tmpl.format(
+        contents = template.render(
             name=name,
+            setup_kwargs=(
+                ('use_autover', True),
+            ),
         )
 
         with open(os.path.join(project_dir, file_name), 'wt') as target_file:
