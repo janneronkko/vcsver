@@ -121,27 +121,10 @@ class VirtualEnv:
 
 @pytest.fixture()
 def test_project(tmpdir, virtualenv):  # pylint: disable=redefined-outer-name
-    name = 'testpkg'
-
     tmpdir = str(tmpdir)
 
     project_dir = os.path.join(tmpdir, 'project')
     os.mkdir(project_dir)
-
-    for file_name in ('setup.py', 'testpkg.py'):
-        template = mako.template.Template(
-            filename=os.path.join(TEMPLATE_DIR, '{}.tmpl'.format(file_name)),
-        )
-
-        contents = template.render(
-            name=name,
-            setup_kwargs=(
-                ('use_autover', True),
-            ),
-        )
-
-        with open(os.path.join(project_dir, file_name), 'wt') as target_file:
-            target_file.write(contents)
 
     sandbox_dir = os.path.join(tmpdir, 'sandbox')
     os.mkdir(sandbox_dir)
@@ -149,7 +132,7 @@ def test_project(tmpdir, virtualenv):  # pylint: disable=redefined-outer-name
     return TestProject(
         virtualenv,
         project_dir,
-        name,
+        'testpkg',
         sandbox_dir,
     )
 
@@ -162,9 +145,48 @@ class TestProject:
         self.virtualenv = virtualenv
         self.path = path
         self.name = name
+        self.setup_kwargs = {
+            'use_autover': True,
+        }
+
+        self._write_setup_py()
+        self._write_template(
+            'testpkg.py',
+            context={
+                'name': self.name,
+            },
+        )
 
         self._dist_seqnum = itertools.count(0)
         self._sandbox = VirtualEnv(sandbox_dir)
+
+        self._configuring = False
+
+    def set_setup_kwargs(self, **kwargs):
+        self.setup_kwargs = kwargs
+
+        self._write_setup_py()
+
+    def _write_setup_py(self):
+        self._write_template(
+            'setup.py',
+            context={
+                'name': self.name,
+                'setup_kwargs': self.setup_kwargs.items(),
+            },
+        )
+
+    def _write_template(self, file_name, context):
+        template = mako.template.Template(
+            filename=os.path.join(TEMPLATE_DIR, '{}.tmpl'.format(file_name)),
+        )
+
+        contents = template.render(
+            **context,
+        )
+
+        with open(os.path.join(self.path, file_name), 'wt') as target_file:
+            target_file.write(contents)
 
     def assert_current_version(self, expected_version):
         # Make sure the expected version conforms to pep440
