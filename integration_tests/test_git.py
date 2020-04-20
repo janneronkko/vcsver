@@ -59,6 +59,24 @@ class Git:
         return util.run('git', *args, **kwargs)
 
 
+def test_get_version_defined_in_setup_py(test_project):
+    test_project.set_setup_kwargs(version='2.0')
+
+    test_project.assert_current_version('2.0')
+
+    vcs = Git(test_project.path)
+
+    vcs.create_commit()
+    vcs.create_commit()
+    test_project.assert_current_version('2.0')
+
+    vcs.create_tag('1.0')
+    test_project.assert_current_version('2.0')
+
+    test_project.set_setup_kwargs(version='2.1')
+    test_project.assert_current_version('2.1')
+
+
 def test_initial_history_without_tags(test_project):
     vcs = Git(test_project.path)
 
@@ -106,3 +124,14 @@ def test_history_with_tags(test_project):
             vcs.get_local_version_string(),
         ),
     )
+
+
+def test_configuration_having_version_defined_in_setup_py_and_autover_enabled(test_project):
+    vcs = Git(test_project.path)
+
+    test_project.set_setup_kwargs(version='5.0', use_autover=True)
+
+    vcs.create_commit()
+    vcs.create_tag('6.0')
+
+    test_project.assert_current_version('6.0')

@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 import sys
+import tarfile
 import tempfile
 
 import mako.template
@@ -22,7 +23,7 @@ def virtualenv():
         venv = VirtualEnv(temp_dir)
 
         venv.run_python(
-            'setup.py', 'install',
+            'setup.py', 'develop',
             check=True,
             cwd=AUTOVER_ROOT_DIR,
         )
@@ -37,7 +38,14 @@ class VirtualEnv:
         self.path = path
 
         util.run(sys.executable, '-m', 'venv', self.path)
-        self.run_pip('install', 'wheel', check=True)
+        self.install_packages(
+            'coverage',
+            'wheel',
+        )
+
+    @property
+    def coverange(self):
+        return os.path.join(self.path, 'bin', 'coverange')
 
     @property
     def python(self):
@@ -49,6 +57,31 @@ class VirtualEnv:
 
     def run_python(self, *args, **kwargs):
         return util.run(self.python, *args, **kwargs)
+
+    def run_python_with_coverage(self, *args, **kwargs):
+        env = kwargs.pop('env', None)
+        if not env:
+            env = os.environ.copy()
+
+        env['COVERAGE_FILE'] = os.path.join(
+            os.getcwd(),
+            '.coverage.integration-tests',
+        )
+
+        # Run through coverage binary so that coverage from integration tests
+        # are included. pytest-cov combines all .coverage.* files at the end
+        # of test run, i.e. nothing else is required for the coverage from
+        # the command below to be included in the final coverage data file.
+        return util.run(
+            os.path.join(self.path, 'bin', 'coverage'),
+            'run',
+            '--append',
+            '--source', os.path.join(os.getcwd(), 'setuptools_autover'),
+            '--rcfile', os.path.join(os.getcwd(), '.coveragerc'),
+            *args,
+            env=env,
+            **kwargs,
+        )
 
     def run_pip(self, *args, **kwargs):
         return util.run(self.pip, *args, **kwargs)
@@ -197,11 +230,30 @@ class TestProject:
         ), type(version)
 
         assert expected_version == self.get_current_version_from_project_dir()
+        assert expected_version == self.get_current_version_from_sdist()
         assert expected_version == self.get_current_version_after_installing_pkg('sdist')
         assert expected_version == self.get_current_version_after_installing_pkg('bdist_wheel')
 
     def get_current_version_from_project_dir(self):
         return self._get_version_from_project_dir(self.path)
+
+    def get_current_version_from_sdist(self):
+        dist_file_path = self.create_dist('sdist')
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with tarfile.open(dist_file_path, 'r:*') as tar:
+                common_path = os.path.commonpath(tar.getnames())
+                assert common_path
+                assert not any(
+                    member.name != common_path and os.path.relpath(member.name, common_path).startswith('.')
+                    for member in tar.getmembers()
+                )
+
+                tar.extractall(temp_dir)
+
+            sdist_dir = os.path.join(temp_dir, common_path)
+
+            return self._get_version_from_project_dir(sdist_dir)
 
     def get_current_version_after_installing_pkg(self, dist_name):
         dist_file_path = self.create_dist(dist_name)
@@ -209,8 +261,8 @@ class TestProject:
         return self._get_version_after_installing(dist_file_path)
 
     def _get_version_from_project_dir(self, path):
-        version_str = util.run(
-            self.virtualenv.python, 'setup.py', '--version',
+        version_str = self.virtualenv.run_python_with_coverage(
+            'setup.py', '--version',
             stdout=subprocess.PIPE,
             check=True,
             cwd=path,
@@ -250,7 +302,7 @@ class TestProject:
             '{:0>4}'.format(next(self._dist_seqnum)),
         )
 
-        self.virtualenv.run_python(
+        self.virtualenv.run_python_with_coverage(
             'setup.py', dist_name, '--dist-dir', dist_dir,
             check=True,
             cwd=self.path,
