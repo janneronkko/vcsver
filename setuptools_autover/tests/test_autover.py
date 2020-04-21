@@ -16,7 +16,7 @@ from .. import types
         ({'root_version': '1.0'}, '1.2.3'),
     ),
 )
-def test_handle_version(
+def test_handle_use_autover(
     mocker,
     use_autover,
     expected_version,
@@ -30,7 +30,7 @@ def test_handle_version(
     dist_mock.use_autover = use_autover
     dist_mock.metadata.version = None
 
-    autover.handle_version(
+    autover.handle_use_autover(
         dist_mock,
         mocker.sentinel.attr,
         mocker.sentinel.value,

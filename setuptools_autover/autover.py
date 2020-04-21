@@ -16,10 +16,6 @@ DEFAULT_CONFIG = {
 
 
 def handle_use_autover(dist, attr, value):  # pylint: disable=unused-argument
-    pass
-
-
-def handle_version(dist, attr, value):  # pylint: disable=unused-argument
     user_config = dist.use_autover
 
     if not isinstance(user_config, collections.abc.Mapping):
