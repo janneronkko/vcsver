@@ -1,6 +1,19 @@
+import os
+
 import setuptools
 
-import setuptools_autover
+try:
+    import setuptools_autover
+    VERSION = setuptools_autover.get_version()
+
+except ImportError:
+    if 'TOX_WORK_DIR' not in os.environ:
+        # When running inside TOX, setuptools_autover is not installed in
+        # the virtual environment created by TOX because we can not depend
+        # on ourself when installing
+        raise
+
+    VERSION = '0.0+tox'
 
 
 with open('README.rst', 'rt') as readme_file:
@@ -8,7 +21,7 @@ with open('README.rst', 'rt') as readme_file:
 
 setuptools.setup(
     name='setuptools_autover',
-    version=setuptools_autover.get_version(),
+    version=VERSION,
     description='Automatic package version numbering from version control',
     long_description=long_desc,
     long_description_content_type='text/x-rst',

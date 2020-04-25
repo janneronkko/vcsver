@@ -1,6 +1,7 @@
 *.in              text
 *.ini             text
 *.py              text
+*.toml            text
 *.txt             text
 
 .coveragerc       text
