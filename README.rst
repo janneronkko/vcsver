@@ -5,17 +5,12 @@ setuptools_autover
 About
 =====
 
-A package allowing generating PEP-440 compatible version numbers from version
-control.
+A package allowing generating PEP-440 compatible version numbers based on
+version control system. The goal is that each commit has unique version number
+that can be traced back to the commit easily.
 
 Currently only git is supported but it is possible to add support for other
 version control systems.
-
-The goal of the project is to provide reasonable defaults and an easy way to
-customize how version numbers are generated from version control system.
-
-The code is currently considered stable and ready for production use. The API
-should not change in such way that the change would break current usage.
 
 Usage
 =====
