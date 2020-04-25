@@ -192,6 +192,11 @@ class TestProject:
 
         self._dist_seqnum = itertools.count(0)
         self._sandbox = VirtualEnv(sandbox_dir)
+        self._sandbox.run_python(
+            'setup.py', 'develop',
+            check=True,
+            cwd=AUTOVER_ROOT_DIR,
+        )
 
         self._configuring = False
 
