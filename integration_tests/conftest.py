@@ -44,10 +44,6 @@ class VirtualEnv:
         )
 
     @property
-    def coverange(self):
-        return os.path.join(self.path, 'bin', 'coverange')
-
-    @property
     def python(self):
         return os.path.join(self.path, 'bin', 'python')
 
