@@ -45,7 +45,7 @@ setuptools.setup(
     python_requires='>=3.5',
     entry_points={
         'distutils.setup_keywords': [
-            'use_autover = setuptools_autover.autover:handle_use_autover',
+            'use_autover = setuptools_autover.setuptools:use_autover',
         ],
     },
 )

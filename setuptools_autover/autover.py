@@ -1,4 +1,3 @@
-import collections.abc
 import warnings
 
 from . import errors
@@ -14,20 +13,6 @@ DEFAULT_CONFIG = {
     'parse_tag': lambda tag: tag,
     'create_version': pep440.create_post_with_dev,
 }
-
-
-def handle_use_autover(dist, attr, value):  # pylint: disable=unused-argument
-    get_version_kwargs = dist.use_autover
-
-    if not isinstance(get_version_kwargs, collections.abc.Mapping):
-        if not get_version_kwargs:
-            return
-
-        get_version_kwargs = {}
-
-    version = get_version(**get_version_kwargs)
-    if version is not None:
-        dist.metadata.version = version
 
 
 def config_to_get_version_kwargs(config):
