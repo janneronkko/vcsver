@@ -1,44 +1,8 @@
-import warnings
-
 from . import errors
 from . import git
 from . import pep440
 from . import types
 from . import util
-
-
-DEFAULT_CONFIG = {
-    'root_version': '0',
-    'read_revision_info': git.GitRevisionInfoReader(),
-    'parse_tag': lambda tag: tag,
-    'create_version': pep440.create_post_with_dev,
-}
-
-
-def config_to_get_version_kwargs(config):
-    warnings.warn(
-        'config_to_get_versino_kwargs is deprecated and will be removed in version 2.0',
-        category=DeprecationWarning,
-    )
-
-    kwargs = {
-        key: config.get(key, default_value)
-        for key, default_value in DEFAULT_CONFIG.items()
-    }
-
-    unknown_items = {
-        key: value
-        for key, value in config.items()
-        if key not in DEFAULT_CONFIG
-    }
-
-    if unknown_items:
-        raise errors.InvalidConfigError(
-            'The configuration contains unknown items.',
-            unknown_items,
-        )
-
-    return kwargs
 
 
 def get_version(

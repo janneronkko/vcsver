@@ -1,11 +1,9 @@
 from .autover import (
-    config_to_get_version_kwargs,
     get_version,
 )
 
 from .errors import (
     AutoverError,
-    InvalidConfigError,
     RevisionInfoNotFoundError,
 )
 

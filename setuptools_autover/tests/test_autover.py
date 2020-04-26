@@ -1,38 +1,8 @@
-import collections
-
 import pytest
 
 from .. import autover
 from .. import errors
 from .. import types
-
-
-def test_config_to_get_version_kwargs():
-    with pytest.deprecated_call():
-        kwargs = autover.config_to_get_version_kwargs({})
-
-    assert kwargs == autover.DEFAULT_CONFIG
-
-    custom_config = {
-        'root_version': '1.0',
-    }
-
-    with pytest.deprecated_call():
-        kwargs = autover.config_to_get_version_kwargs(custom_config)
-
-    assert kwargs == collections.ChainMap(
-        custom_config,
-        autover.DEFAULT_CONFIG,
-    )
-
-    with pytest.raises(errors.InvalidConfigError) as excinfo:
-        with pytest.deprecated_call():
-            autover.config_to_get_version_kwargs({
-                'unknown_item': 1,
-                'root_version': '1.0',
-            })
-
-    assert excinfo.value.invalid_items == {'unknown_item': 1}
 
 
 @pytest.mark.parametrize(
