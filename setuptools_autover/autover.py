@@ -1,4 +1,5 @@
 import collections.abc
+import warnings
 
 from . import errors
 from . import git
@@ -16,15 +17,13 @@ DEFAULT_CONFIG = {
 
 
 def handle_use_autover(dist, attr, value):  # pylint: disable=unused-argument
-    user_config = dist.use_autover
+    get_version_kwargs = dist.use_autover
 
-    if not isinstance(user_config, collections.abc.Mapping):
-        if not user_config:
+    if not isinstance(get_version_kwargs, collections.abc.Mapping):
+        if not get_version_kwargs:
             return
 
-        user_config = {}
-
-    get_version_kwargs = config_to_get_version_kwargs(user_config)
+        get_version_kwargs = {}
 
     version = get_version(**get_version_kwargs)
     if version is not None:
@@ -32,6 +31,11 @@ def handle_use_autover(dist, attr, value):  # pylint: disable=unused-argument
 
 
 def config_to_get_version_kwargs(config):
+    warnings.warn(
+        'config_to_get_versino_kwargs is deprecated and will be removed in version 2.0',
+        category=DeprecationWarning,
+    )
+
     kwargs = {
         key: config.get(key, default_value)
         for key, default_value in DEFAULT_CONFIG.items()
@@ -53,10 +57,10 @@ def config_to_get_version_kwargs(config):
 
 
 def get_version(
-    root_version=DEFAULT_CONFIG['root_version'],
-    read_revision_info=DEFAULT_CONFIG['read_revision_info'],
-    parse_tag=DEFAULT_CONFIG['parse_tag'],
-    create_version=DEFAULT_CONFIG['create_version'],
+    root_version='0',
+    read_revision_info=git.GitRevisionInfoReader(),
+    parse_tag=lambda tag: tag,
+    create_version=pep440.create_post_with_dev,
 ):
     revision_info = read_revision_info()
 

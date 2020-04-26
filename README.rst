@@ -133,9 +133,10 @@ API
 Functions
 ---------
 
-
 **setuptools_autover.config_to_get_version_kwargs(config)**
   Return kwargs dictionary for *setuptools_autover.get_version* based on the given configuration.
+
+  Deprecated in version 1.1. Will be removed in version 2.0.
 
 **setuptools_autover.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.create_post_with_dev)**
   The arguments are the same as the configurations passed for *use_autover* argument from *setup.py*
@@ -184,6 +185,8 @@ Exceptions
 
 **setuptools_autover.InvalidConfigError**
   The configuration dict is not valid.
+
+  Deprecated in version 1.1. Will be removed in version 2.0.
 
 **setuptools_autover.RevisionInfoNotFoundError**
   Version could not be generated because revision info was not found

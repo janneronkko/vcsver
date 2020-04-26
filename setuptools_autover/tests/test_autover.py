@@ -43,33 +43,38 @@ def test_handle_use_autover(
         return
 
     if isinstance(use_autover, dict):
-        expected_get_version_call_kwargs = collections.ChainMap(
-            use_autover,
-            autover.DEFAULT_CONFIG,
-        )
+        expected_get_version_call_kwargs = use_autover
 
     else:
-        expected_get_version_call_kwargs = autover.DEFAULT_CONFIG
+        expected_get_version_call_kwargs = {}
 
     get_version_mock.assert_called_once_with(**expected_get_version_call_kwargs)
 
 
 def test_config_to_get_version_kwargs():
-    assert autover.config_to_get_version_kwargs({}) == autover.DEFAULT_CONFIG
+    with pytest.deprecated_call():
+        kwargs = autover.config_to_get_version_kwargs({})
+
+    assert kwargs == autover.DEFAULT_CONFIG
 
     custom_config = {
         'root_version': '1.0',
     }
-    assert autover.config_to_get_version_kwargs(custom_config) == collections.ChainMap(
+
+    with pytest.deprecated_call():
+        kwargs = autover.config_to_get_version_kwargs(custom_config)
+
+    assert kwargs == collections.ChainMap(
         custom_config,
         autover.DEFAULT_CONFIG,
     )
 
     with pytest.raises(errors.InvalidConfigError) as excinfo:
-        autover.config_to_get_version_kwargs({
-            'unknown_item': 1,
-            'root_version': '1.0',
-        })
+        with pytest.deprecated_call():
+            autover.config_to_get_version_kwargs({
+                'unknown_item': 1,
+                'root_version': '1.0',
+            })
 
     assert excinfo.value.invalid_items == {'unknown_item': 1}
 
