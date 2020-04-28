@@ -82,7 +82,7 @@ class Runner:
         process = await asyncio.create_subprocess_exec(
             'docker', 'run',
             '--rm',
-            '-v', f'{this_dir}:/autover',
+            '-v', f'{this_dir}:/work',
             f'python:{python_version}-alpine',
             'sh', '-c', _TEST_SCRIPT.format(
                 tox_env=tox_env,
@@ -112,7 +112,7 @@ set -e
 
 apk add --update git
 pip install tox
-cd /autover
+cd /work
 adduser -D -u $(stat -c %g setup.py) user
 su user -c "tox -e {tox_env}"
 '''
