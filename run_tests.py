@@ -2,8 +2,12 @@
 
 import argparse
 import asyncio
+import enum
+import io
 import os
 import signal
+import sys
+import posixpath
 
 
 SUPPORTED_PYTHON_VERSIONS = {
@@ -19,9 +23,11 @@ def main():
 
     loop = asyncio.get_event_loop()
 
-    run = Runner()
+    processes = Processes(live=args.live_log)
 
-    loop.add_signal_handler(signal.SIGINT, run.terminate)
+    loop.add_signal_handler(signal.SIGINT, processes.terminate)
+
+    run = Runner(processes.run)
 
     versions = SUPPORTED_PYTHON_VERSIONS
     if args.versions:
@@ -38,6 +44,13 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
+        '--live-log',
+        help='Print logs from test runs during tests',
+        default=False,
+        action='store_true',
+    )
+
+    parser.add_argument(
         'versions',
         nargs='*',
     )
@@ -45,17 +58,36 @@ def parse_args():
     return parser.parse_args()
 
 
-class Runner:
-    def __init__(self):
+class TerminatedError(Exception):
+    def __init__(self, output):
         super().__init__()
 
-        self._terminating = False
-        self._processes = {}
+        self.output = output
 
-    def terminate(self):
-        self._terminating = True
-        for process in self._processes.values():
-            process.send_signal(signal.SIGKILL)
+
+class TestResult:
+    class Type(enum.Enum):
+        passed = 'passed'
+        failed = 'failed'
+        aborted = 'aborted'
+
+    def __init__(self, result, python_version, output):
+        super().__init__()
+
+        self.result = result
+        self.python_version = python_version
+        self.output = output
+
+    @property
+    def passed(self):
+        return self.result == self.Type.passed
+
+
+class Runner:
+    def __init__(self, run_command):
+        super().__init__()
+
+        self._run_command = run_command
 
     async def __call__(self, versions):
         tasks = [
@@ -65,57 +97,136 @@ class Runner:
 
         results = await asyncio.gather(*tasks)
 
-        if not self._terminating:
-            for python_version, passed, stdout in results:
-                print('Python {}: {}'.format(python_version, 'pass' if passed else 'fail'))
-                if not passed:
-                    for line in stdout.split('\n'):
-                        print(f'> {line}')
+        print()
+        for result in results:
+            if not result.passed:
+                heading = f'Python {result.python_version} failed'
+                header_bar = '=' * (((120 - len(heading)) // 2) - 1)
+                print(f'{header_bar} {heading} {header_bar}')
+                for line in result.output:
+                    print(f'> {line}', end='')
+                print('=' * 120)
+                print()
+
+        print('Summary:')
+        for result in results:
+            print(f'  Python {result.python_version}: {result.result.value}')
 
     async def _run_tests(self, python_version, tox_env):
-        print(f'Running tests with Python {python_version}')
+        print(f'Running Tox env {tox_env} on Python {python_version}...')
+        try:
+            this_dir = os.path.dirname(__file__)
+            if not os.path.isabs(this_dir):
+                this_dir = os.path.join(os.getcwd(), this_dir)
 
-        this_dir = os.path.dirname(__file__)
-        if not os.path.isabs(this_dir):
-            this_dir = os.path.join(os.getcwd(), this_dir)
+            docker_image = f'tox:latest-{python_version}'
+
+            returncode, stdout = await self._run_command(
+                'docker', 'build',
+                '--build-arg', f'PYTHON_VERSION={python_version}',
+                '--file', 'Dockerfile.tox',
+                '--tag', docker_image,
+                this_dir,
+                tag=python_version,
+            )
+            if returncode != 0:
+                return TestResult(
+                    TestResult.Type.failed,
+                    python_version,
+                    stdout,
+                )
+
+            data_dir = f'/work/.docker-tox/{python_version}'
+            stat = os.stat(this_dir)
+
+            returncode, stdout = await self._run_command(
+                'docker', 'run',
+                '--rm',
+                '--volume', f'{this_dir}:/work',
+                '--user', f'{stat.st_uid}:{stat.st_gid}',
+                '--workdir', '/work',
+                '--env', 'HOME={}'.format(posixpath.join(data_dir, 'home')),
+                docker_image,
+                'tox',
+                '--workdir', posixpath.join(data_dir, 'workdir'),
+                '-e', tox_env,
+                tag=python_version,
+            )
+
+            print(f'Tox env {tox_env} on Python {python_version} finished.')
+            return TestResult(
+                TestResult.Type.passed if returncode == 0 else TestResult.Type.failed,
+                python_version,
+                stdout,
+            )
+
+        except TerminatedError as err:
+            return TestResult(
+                TestResult.Type.aborted,
+                python_version,
+                err.output,
+            )
+
+
+class Processes:
+    def __init__(self, live):
+        super().__init__()
+
+        self._live = live
+        self._processes = {}
+        self._terminated = False
+
+    def terminate(self):
+        self._terminated = True
+        for process in self._processes.values():
+            process.send_signal(signal.SIGKILL)
+
+    async def run(self, *args, tag, **kwargs):
+        command = ' '.join(
+            f'"{arg}"' if ' ' in arg else arg
+            for arg in args
+        )
+        self._live_log(tag, command)
+
+        stdout = io.StringIO()
 
         process = await asyncio.create_subprocess_exec(
-            'docker', 'run',
-            '--rm',
-            '-v', f'{this_dir}:/work',
-            f'python:{python_version}-alpine',
-            'sh', '-c', _TEST_SCRIPT.format(
-                tox_env=tox_env,
-            ),
+            *args,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.STDOUT,
+            **kwargs,
         )
 
-        self._processes[process.pid] = process
+        try:
+            self._processes[process.pid] = process
 
-        stdout, stderr = await process.communicate()  # pylint: disable=unused-variable
+            line = '\n'
+            while not process.stdout.at_eof():
+                line = await process.stdout.readline()
+                line = line.decode()
+                stdout.write(line)
 
-        del self._processes[process.pid]
+                self._live_log(tag, line)
 
-        if not self._terminating:
-            print(f'Tests on Python {python_version} done')
+            await process.wait()
 
-        return (
-            python_version,
-            process.returncode == 0,
-            stdout.decode(),
-        )
+            stdout.seek(0)
 
+            if self._terminated:
+                raise TerminatedError(stdout)
 
-_TEST_SCRIPT = '''
-set -e
+            return process.returncode, stdout
 
-apk add --update git
-pip install tox
-cd /work
-adduser -D -u $(stat -c %g setup.py) user
-su user -c "tox -e {tox_env}"
-'''
+        finally:
+            self._processes.pop(process.pid, None)
+
+    def _live_log(self, tag, line):
+        if not self._live:
+            return
+
+        line = line.rstrip()
+        sys.stdout.write(f'{tag} > {line}\n')
+
 
 if __name__ == '__main__':
     main()

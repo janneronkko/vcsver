@@ -2,6 +2,7 @@
 /.coverage
 /.coverage.*
 /.tox
+/.docker-tox
 /build
 /coverage
 /dist

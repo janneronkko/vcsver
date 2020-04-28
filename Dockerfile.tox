@@ -1,0 +1,10 @@
+ARG PYTHON_VERSION
+FROM python:${PYTHON_VERSION}-alpine
+
+RUN \
+  apk add --update git \
+  && pip install tox
+
+ENV TOX_TESTENV_PASSENV=HOME
+
+CMD ["tox"]
