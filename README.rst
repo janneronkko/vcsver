@@ -129,6 +129,7 @@ that are mapped to actual values.
 
   Available identifiers:
 
+  - :code:`pep440.post` PEP 440 string using postN
   - :code:`pep440.post_with_dev` PEP 440 string using post0+devN
 
 Configuration matching the default settings:
@@ -163,6 +164,20 @@ Functions
   The arguments are the same as the configurations passed for *vcsver* argument from *setup.py*
 
   Return generated version
+
+**vcsver.pep440.post**
+  Create version that uses *post* patr for version between releases.
+
+  The version is created using the following rules:
+
+  - :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
+      Released version
+  - :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
+      Released version with modified source tree
+  - :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post{distance}+{commit}`
+      Released version
+  - :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post{distance}+{commit}-dirty`
+      Released version with modified source tree
 
 **vcsver.pep440.post_with_dev**
   Create version that uses *post* and *dev* parts for version between releases.

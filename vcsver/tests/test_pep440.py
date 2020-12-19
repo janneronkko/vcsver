@@ -1,3 +1,5 @@
+import itertools
+
 from packaging.version import (
     parse as parse_version,
     Version,
@@ -6,6 +8,28 @@ import pytest
 
 from .. import pep440
 from ..types import VersionInfo
+
+
+@pytest.mark.parametrize(
+    ('version_info', 'expected_version_string'),
+    (
+        (VersionInfo(latest_release='1.0', distance=0, commit='abcdef', dirty=False), '1.0'),
+        (VersionInfo(latest_release='1.0', distance=0, commit='abcdef', dirty=True), '1.0+dirty'),
+        (VersionInfo(latest_release='1.0', distance=1, commit='abcdef', dirty=False), '1.0.post1+abcdef'),
+        (VersionInfo(latest_release='1.0', distance=1, commit='abcdef', dirty=True), '1.0.post1+abcdef.dirty'),
+    ),
+)
+def test_pep440_post(version_info, expected_version_string):
+    assert pep440.post(version_info) == expected_version_string
+
+
+_PEP440_POST_VERSIONS = (
+    '1.0',
+    '1.0.post1',
+    '1.1',
+    '1.1+dirty',
+    '1.1.post1+abcdef.dirty',
+)
 
 
 @pytest.mark.parametrize(
@@ -40,7 +64,10 @@ def _version_order_cases(version_strings):
 
 @pytest.mark.parametrize(
     ('prev_version', 'next_version'),
-    _version_order_cases(_PEP440_POST_WITH_DEV_VERSIONS),
+    itertools.chain(
+        _version_order_cases(_PEP440_POST_VERSIONS),
+        _version_order_cases(_PEP440_POST_WITH_DEV_VERSIONS),
+    )
 )
 def test_version_ordering(prev_version, next_version):
     prev_version = parse_version(prev_version)

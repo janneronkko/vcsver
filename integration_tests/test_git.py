@@ -80,15 +80,17 @@ def test_get_version_defined_in_setup_py(test_project):
 
 
 @pytest.mark.parametrize(
-    'setuptools_kwargs',
+    ('setuptools_kwargs', 'dev_version_format_string'),
     (
-        None,
-        {'vcsver': {'create_version': 'pep440.post_with_dev'}},
+        (None, '{tag}.post0.dev{dist}+{hash}'),
+        ({'vcsver': {'create_version': 'pep440.post'}}, '{tag}.post{dist}+{hash}'),
+        ({'vcsver': {'create_version': 'pep440.post_with_dev'}}, '{tag}.post0.dev{dist}+{hash}'),
     ),
 )
 def test_get_version_from_history(
     test_project,
     setuptools_kwargs,
+    dev_version_format_string,
 ):
     if setuptools_kwargs:
         test_project.set_setup_kwargs(**setuptools_kwargs)
@@ -99,18 +101,20 @@ def test_get_version_from_history(
 
     vcs.create_commit()
     test_project.assert_current_version(
-        '{}.post0.dev1+{}'.format(
-            test_project.root_version,
-            vcs.get_local_version_string(),
+        dev_version_format_string.format(
+            tag=test_project.root_version,
+            dist=1,
+            hash=vcs.get_local_version_string(),
         ),
     )
 
     vcs.create_commit()
     vcs.create_commit()
     test_project.assert_current_version(
-        '{}.post0.dev3+{}'.format(
-            test_project.root_version,
-            vcs.get_local_version_string(),
+        dev_version_format_string.format(
+            tag=test_project.root_version,
+            dist=3,
+            hash=vcs.get_local_version_string(),
         ),
     )
 
@@ -120,16 +124,20 @@ def test_get_version_from_history(
     vcs.create_commit()
     vcs.create_commit()
     test_project.assert_current_version(
-        '1.0.post0.dev2+{}'.format(
-            vcs.get_local_version_string(),
+        dev_version_format_string.format(
+            tag='1.0',
+            dist=2,
+            hash=vcs.get_local_version_string(),
         ),
     )
 
     vcs.create_commit()
     vcs.create_commit()
     test_project.assert_current_version(
-        '1.0.post0.dev4+{}'.format(
-            vcs.get_local_version_string(),
+        dev_version_format_string.format(
+            tag='1.0',
+            dist=4,
+            hash=vcs.get_local_version_string(),
         ),
     )
 

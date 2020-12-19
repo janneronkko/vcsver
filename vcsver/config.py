@@ -11,6 +11,7 @@ TAG_PARSERS = {
 }
 
 VERSION_SCHEMAS = {
+    'pep440.post': pep440.post,
     'pep440.post_with_dev': pep440.post_with_dev,
 }
 
