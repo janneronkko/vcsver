@@ -4,4 +4,4 @@
 #
 #    pip-compile --output-file=requirements/pycodestyle.txt requirements/pycodestyle.in
 #
-pycodestyle==2.5.0        # via -r requirements/pycodestyle.in
+pycodestyle==2.6.0        # via -r requirements/pycodestyle.in

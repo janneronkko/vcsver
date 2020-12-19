@@ -4,10 +4,11 @@
 #
 #    pip-compile --output-file=requirements/pylint.txt requirements/pylint.in
 #
-astroid==2.3.3            # via pylint
-isort==4.3.21             # via pylint
+astroid==2.4.2            # via pylint
+isort==5.6.4              # via pylint
 lazy-object-proxy==1.4.3  # via astroid
 mccabe==0.6.1             # via pylint
-pylint==2.4.4             # via -r requirements/pylint.in
-six==1.14.0               # via astroid
-wrapt==1.11.2             # via astroid
+pylint==2.6.0             # via -r requirements/pylint.in
+six==1.15.0               # via astroid
+toml==0.10.2              # via pylint
+wrapt==1.12.1             # via astroid
