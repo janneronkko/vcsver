@@ -11,7 +11,6 @@ import posixpath
 
 
 SUPPORTED_PYTHON_VERSIONS = {
-    '3.5': 'py35',
     '3.6': 'py36',
     '3.7': 'py37',
     '3.8': 'py38',
