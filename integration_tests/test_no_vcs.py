@@ -1,10 +1,10 @@
-import pytest
+import subprocess
 
-from . import util
+import pytest
 
 
 def test_get_version_from_vcs(test_project):
-    with pytest.raises(util.CalledProcessError) as excinfo:
+    with pytest.raises(subprocess.CalledProcessError) as excinfo:
         test_project.get_current_version_from_project_dir()
 
     stderr = excinfo.value.stderr.decode()

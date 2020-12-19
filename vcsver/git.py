@@ -1,7 +1,6 @@
 import re
 import subprocess
 
-from . import run
 from . import types
 
 
@@ -94,7 +93,7 @@ class GitRevisionInfoReader:
         run_args.setdefault('stdout', subprocess.PIPE)
         run_args.setdefault('stderr', subprocess.PIPE)
 
-        return run.run(
+        return subprocess.run(  # pylint: disable=subprocess-run-check
             ('git',) + args,
             cwd=self._path,
             **run_args
