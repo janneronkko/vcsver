@@ -77,7 +77,7 @@ def test_get_version_defined_in_setup_py(test_project):
     test_project.assert_current_version('2.1')
 
 
-def test_initial_history_without_tags(test_project):
+def test_get_version_from_history(test_project):
     vcs = Git(test_project.path)
 
     test_project.assert_current_version('{}+dirty'.format(test_project.root_version))
@@ -98,13 +98,6 @@ def test_initial_history_without_tags(test_project):
             vcs.get_local_version_string(),
         ),
     )
-
-
-def test_history_with_tags(test_project):
-    vcs = Git(test_project.path)
-
-    vcs.create_commit()
-    vcs.create_commit()
 
     vcs.create_tag('1.0')
     test_project.assert_current_version('1.0')
