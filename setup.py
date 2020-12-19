@@ -42,7 +42,7 @@ setuptools.setup(
     ],
     keywords='setuptools development git version',
     packages=['vcsver'],
-    python_requires='>=3.5',
+    python_requires='>=3.6',
     entry_points={
         'distutils.setup_keywords': [
             'vcsver = vcsver.setuptools:vcsver',
