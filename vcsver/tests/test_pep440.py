@@ -18,7 +18,7 @@ from ..types import VersionInfo
     ),
 )
 def test_pep440_post_with_dev(version_info, expected_version_string):
-    assert pep440.create_post_with_dev(version_info) == expected_version_string
+    assert pep440.post_with_dev(version_info) == expected_version_string
 
 
 _VERSIONS = (

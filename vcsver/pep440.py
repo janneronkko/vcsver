@@ -1,4 +1,4 @@
-def create_post_with_dev(version_info):
+def post_with_dev(version_info):
     latest_version = version_info.latest_release
 
     dirty_separator = '+'

@@ -9,7 +9,7 @@ def get_version(
     root_version='0',
     read_revision_info=git.GitRevisionInfoReader(),
     parse_tag=lambda tag: tag,
-    create_version=pep440.create_post_with_dev,
+    create_version=pep440.post_with_dev,
 ):
     revision_info = read_revision_info()
 

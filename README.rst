@@ -114,7 +114,7 @@ by proving the configuration as mapping.
 
   The function takes one argument of type *vcsver.VersionInfo*. 
 
-  Default value: :code:`vcsver.pep440.create_post_with_dev`
+  Default value: :code:`vcsver.pep440.post_with_dev`
 
 Configuration matching the default settings:
 
@@ -124,7 +124,7 @@ Configuration matching the default settings:
         'root_version': '0',
         'read_revision_info': vcsver.GitRevisionInfoReader(),
         'parse_tag': lambda tag: tag,
-        'create_version': vcsver.pep440.create_post_with_dev,
+        'create_version': vcsver.pep440.post_with_dev,
     }
 
 API
@@ -133,12 +133,12 @@ API
 Functions
 ---------
 
-**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.create_post_with_dev)**
+**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.post_with_dev)**
   The arguments are the same as the configurations passed for *vcsver* argument from *setup.py*
 
   Return generated version
 
-**vcsver.pep440.create_post_with_dev**
+**vcsver.pep440.post_with_dev**
   Create version that uses *post* and *dev* parts for version between releases.
 
   The version is created using the following rules:
