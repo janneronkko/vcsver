@@ -1,9 +1,9 @@
-from .autover import (
+from .vcsver import (
     get_version,
 )
 
 from .errors import (
-    AutoverError,
+    VcsverError,
     RevisionInfoNotFoundError,
 )
 

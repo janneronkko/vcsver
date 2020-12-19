@@ -1,6 +1,6 @@
-==================
-setuptools_autover
-==================
+======
+vcsver
+======
 
 About
 =====
@@ -18,8 +18,8 @@ Usage
 setup.py
 --------
 
-1. Add *setuptools_autover* to *setup_requires* argument
-2. Set *use_autover* argument
+1. Add *vcsver* to *setup_requires* argument
+2. Set *vcsver* argument
     The value can be mapping, (a dict, for example) containing configuration or
     any Python value that evaluates as True.
 
@@ -31,8 +31,8 @@ Use with default settings
 
     setup(
         name='example-package',
-        use_autover=True,
-        setup_requires=['setuptools_autover'],
+        vcsver=True,
+        setup_requires=['vcsver'],
     )
 
 Use with custom settings
@@ -43,23 +43,23 @@ Use with custom settings
 
     setup(
         name='example-package',
-        use_autover={
+        vcsver={
           'root_version': '0.0',
           'parse_tag': lambda tag: tag.lstrip('v'),
           'create_version': lambda ver: '{}.post{}'.format(ver.latest_version, ver.distance),
         },
-        setup_requires=['setuptools_autover'],
+        setup_requires=['vcsver'],
     )
 
 Note that if the *setup* function is called for source tree not having version info available,
-*setuptools_autover.RevisionInfoNotFoundError* is raised.
+*vcsver.RevisionInfoNotFoundError* is raised.
 
 From Python Code
 ----------------
 
 .. code:: python
 
-    from setuptools_autover import get_version
+    from vcsver import get_version
 
     # Using default settings
     version = get_version()
@@ -73,7 +73,7 @@ Version Number Generation
 If setup.py is not run on code in a repository, version information is read from *PKG-INFO* to
 allow *sdist* to work.
 
-When running setup.py on code in a repository, *setuptools_autover.RevisionInfo* object is filled
+When running setup.py on code in a repository, *vcsver.RevisionInfo* object is filled
 based on current revision.
 
 If latest tag is available, latest release version is read from it by using *parse_tag*
@@ -85,7 +85,7 @@ The version string is generated based on the above info using the *create_versio
 Configuration
 =============
 
-The *use_autover* argument can be used for configuring version generation behaviour
+The *vcsver* argument can be used for configuring version generation behaviour
 by proving the configuration as mapping.
 
 **root_version**
@@ -96,10 +96,10 @@ by proving the configuration as mapping.
 **read_revision_info**
   Callable used for reading revision information from VCS (or other source).
 
-  The function should not take any arguments and should return instance of *setuptools_autover.RevisionInfo*
+  The function should not take any arguments and should return instance of *vcsver.RevisionInfo*
   or None in case revision info is not available.
 
-  By default :code:`setuptools_autover.GitRevisionInfoReader` instance with default arguments is used.
+  By default :code:`vcsver.GitRevisionInfoReader` instance with default arguments is used.
 
 **parse_tag**
   Function parsing version string from a tag.
@@ -110,11 +110,11 @@ by proving the configuration as mapping.
   Default value: :code:`lambda tag: tag`
 
 **create_version**
-  Function creating version string from *setuptools_autover.VersionInfo*.
+  Function creating version string from *vcsver.VersionInfo*.
 
-  The function takes one argument of type *setuptools_autover.VersionInfo*. 
+  The function takes one argument of type *vcsver.VersionInfo*. 
 
-  Default value: :code:`setuptools_autover.pep440.create_post_with_dev`
+  Default value: :code:`vcsver.pep440.create_post_with_dev`
 
 Configuration matching the default settings:
 
@@ -122,9 +122,9 @@ Configuration matching the default settings:
 
     {
         'root_version': '0',
-        'read_revision_info': setuptools_autover.GitRevisionInfoReader(),
+        'read_revision_info': vcsver.GitRevisionInfoReader(),
         'parse_tag': lambda tag: tag,
-        'create_version': setuptools_autover.pep440.create_post_with_dev,
+        'create_version': vcsver.pep440.create_post_with_dev,
     }
 
 API
@@ -133,12 +133,12 @@ API
 Functions
 ---------
 
-**setuptools_autover.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.create_post_with_dev)**
-  The arguments are the same as the configurations passed for *use_autover* argument from *setup.py*
+**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.create_post_with_dev)**
+  The arguments are the same as the configurations passed for *vcsver* argument from *setup.py*
 
   Return generated version
 
-**setuptools_autover.pep440.create_post_with_dev**
+**vcsver.pep440.create_post_with_dev**
   Create version that uses *post* and *dev* parts for version between releases.
 
   The version is created using the following rules:
@@ -155,7 +155,7 @@ Functions
 Classes
 -------
 
-setuptools_autover.GitRevisionInfoReader
+vcsver.GitRevisionInfoReader
 ****************************************
 
 Read revision info from Git repository.
@@ -170,21 +170,21 @@ Constructor arguments:
 Members:
 
 **__call__(self)**
-  Return setuptools_autover.RevisionInfo generated from Git history of *HEAD*.
+  Return vcsver.RevisionInfo generated from Git history of *HEAD*.
 
 Exceptions
 ----------
 
-**setuptools_autover.AutoverError**
-  Base class for exceptions thrown by *setuptools_autover*
+**vcsver.VcsverError**
+  Base class for exceptions thrown by *vcsver*
 
-**setuptools_autover.RevisionInfoNotFoundError**
+**vcsver.RevisionInfoNotFoundError**
   Version could not be generated because revision info was not found
 
 Types
 -----
 
-**setuptools_autover.RevisionInfo**
+**vcsver.RevisionInfo**
   Named tuple containing revision info:
 
   - **latest_tag**: The most recent tag (None if there is no tags before the current revision)
@@ -194,7 +194,7 @@ Types
     If there is no commits, the *lastest_tag* and *commit* should be :code:`None` and dirty should be
     set to :code:`True`
 
-**setuptools_autover.VersionInfo**
+**vcsver.VersionInfo**
   Named tuple containing version info:
 
   - **latest_version**: The most recent version (None if there is no released version before the current revision)

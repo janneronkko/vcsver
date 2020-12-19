@@ -14,7 +14,7 @@ import pytest
 from . import util
 
 TEMPLATE_DIR = os.path.dirname(__file__)
-AUTOVER_ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
+VCSVER_ROOT_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 @pytest.fixture(scope='session')
@@ -25,7 +25,7 @@ def virtualenv():
         venv.run_python(
             'setup.py', 'develop',
             check=True,
-            cwd=AUTOVER_ROOT_DIR,
+            cwd=VCSVER_ROOT_DIR,
         )
 
         yield venv
@@ -72,7 +72,7 @@ class VirtualEnv:
             os.path.join(self.path, 'bin', 'coverage'),
             'run',
             '--append',
-            '--source', os.path.join(os.getcwd(), 'setuptools_autover'),
+            '--source', os.path.join(os.getcwd(), 'vcsver'),
             '--rcfile', os.path.join(os.getcwd(), '.coveragerc'),
             *args,
             env=env,
@@ -175,7 +175,7 @@ class TestProject:
         self.path = path
         self.name = name
         self.setup_kwargs = {
-            'use_autover': True,
+            'vcsver': True,
         }
 
         self._write_setup_py()
@@ -191,7 +191,7 @@ class TestProject:
         self._sandbox.run_python(
             'setup.py', 'develop',
             check=True,
-            cwd=AUTOVER_ROOT_DIR,
+            cwd=VCSVER_ROOT_DIR,
         )
 
         self._configuring = False
@@ -271,7 +271,7 @@ class TestProject:
 
         assert not os.path.isdir(
             os.path.join(path, '.eggs'),
-        ), 'setuptools_autover or its dependencies were downloaded'
+        ), 'vcsver or its dependencies were downloaded'
 
         return version_str
 

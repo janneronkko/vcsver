@@ -50,10 +50,10 @@ class Git:
         kwargs['check'] = True
 
         environ = kwargs.get('env') or os.environ.copy()
-        environ['GIT_AUTHOR_NAME'] = 'Setuptools Autover Test'
-        environ['GIT_AUTHOR_EMAIL'] = 'autover@example.com'
-        environ['GIT_COMMITTER_NAME'] = 'Setuptools Autover Test'
-        environ['GIT_COMMITTER_EMAIL'] = 'autover@example.com'
+        environ['GIT_AUTHOR_NAME'] = 'Setuptools Vcsver Test'
+        environ['GIT_AUTHOR_EMAIL'] = 'vcsver@example.com'
+        environ['GIT_COMMITTER_NAME'] = 'Setuptools Vcsver Test'
+        environ['GIT_COMMITTER_EMAIL'] = 'vcsver@example.com'
         kwargs['env'] = environ
 
         return util.run('git', *args, **kwargs)
@@ -126,10 +126,10 @@ def test_history_with_tags(test_project):
     )
 
 
-def test_configuration_having_version_defined_in_setup_py_and_autover_enabled(test_project):
+def test_configuration_having_version_defined_in_setup_py_and_vcsver_enabled(test_project):
     vcs = Git(test_project.path)
 
-    test_project.set_setup_kwargs(version='5.0', use_autover=True)
+    test_project.set_setup_kwargs(version='5.0', vcsver=True)
 
     vcs.create_commit()
     vcs.create_tag('6.0')

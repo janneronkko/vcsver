@@ -4,7 +4,7 @@ from .. import util
 
 
 def test_parsing_pkg_info_file(mocker):
-    open_mock = mocker.patch('setuptools_autover.util.open')
+    open_mock = mocker.patch('vcsver.util.open')
     open_mock.return_value = io.StringIO(
         'Name: name\n'
         'Version: 1.0\n'

@@ -1,6 +1,6 @@
 import pytest
 
-from .. import autover
+from .. import vcsver
 from .. import errors
 from .. import types
 
@@ -26,13 +26,13 @@ def test_get_version_from_vcs(
     )
 
     parse_pkg_info_file_mock = mocker.patch(
-        'setuptools_autover.util.parse_pkg_info_file',
+        'vcsver.util.parse_pkg_info_file',
         return_value={
             'Version': mocker.sentinel.pkg_info_version,
         },
     )
 
-    version = autover.get_version(
+    version = vcsver.get_version(
         root_version=mocker.sentinel.root_version,
         read_revision_info=lambda: types.RevisionInfo(
             latest_tag=latest_tag,
@@ -76,7 +76,7 @@ def test_get_version_from_pkg_info_file(
     pkg_info_result,
 ):
     parse_pkg_info_file_mock = mocker.patch(
-        'setuptools_autover.util.parse_pkg_info_file',
+        'vcsver.util.parse_pkg_info_file',
     )
 
     expecting_version = not isinstance(pkg_info_result, Exception)
@@ -87,7 +87,7 @@ def test_get_version_from_pkg_info_file(
         parse_pkg_info_file_mock.side_effect = pkg_info_result
 
     try:
-        version = autover.get_version(
+        version = vcsver.get_version(
             root_version=mocker.sentinel.root_version,
             read_revision_info=lambda: None,
             parse_tag=None,

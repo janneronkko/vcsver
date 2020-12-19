@@ -6,7 +6,7 @@ from .. import setuptools
 
 
 @pytest.mark.parametrize(
-    ('use_autover', 'expected_version'),
+    ('vcsver', 'expected_version'),
     (
         (None, None),
         (True, '1.2.3'),
@@ -14,21 +14,21 @@ from .. import setuptools
         ({'root_version': '1.0'}, '1.2.3'),
     ),
 )
-def test_use_autover(
+def test_vcsver(
     mocker,
-    use_autover,
+    vcsver,
     expected_version,
 ):
     get_version_mock = mocker.patch(
-        'setuptools_autover.autover.get_version',
+        'vcsver.setuptools.get_version',
         return_value='1.2.3',
     )
 
     dist_mock = mocker.Mock(name='Dist')
-    dist_mock.use_autover = use_autover
+    dist_mock.vcsver = vcsver
     dist_mock.metadata.version = None
 
-    setuptools.use_autover(
+    setuptools.vcsver(
         dist_mock,
         mocker.sentinel.attr,
         mocker.sentinel.value,
@@ -36,13 +36,13 @@ def test_use_autover(
 
     assert dist_mock.metadata.version == expected_version
 
-    if use_autover is None:
+    if vcsver is None:
         assert not get_version_mock.called
         return
 
-    if isinstance(use_autover, dict):
+    if isinstance(vcsver, dict):
         expected_get_version_call_kwargs = collections.ChainMap(
-            use_autover,
+            vcsver,
         )
 
     else:

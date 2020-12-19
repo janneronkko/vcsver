@@ -3,12 +3,12 @@ import os
 import setuptools
 
 try:
-    import setuptools_autover
-    VERSION = setuptools_autover.get_version()
+    import vcsver
+    VERSION = vcsver.get_version()
 
 except ImportError:
     if 'TOX_WORK_DIR' not in os.environ:
-        # When running inside TOX, setuptools_autover is not installed in
+        # When running inside TOX, vcsver is not installed in
         # the virtual environment created by TOX because we can not depend
         # on ourself when installing
         raise
@@ -20,17 +20,17 @@ with open('README.rst', 'rt') as readme_file:
     long_desc = readme_file.read()  # pylint: disable=invalid-name
 
 setuptools.setup(
-    name='setuptools_autover',
+    name='vcsver',
     version=VERSION,
     description='Automatic package version numbering from version control',
     long_description=long_desc,
     long_description_content_type='text/x-rst',
-    url='https://github.com/janneronkko/setuptools_autover',
+    url='https://github.com/janneronkko/vcsver',
     author='Janne Rönkkö',
     author_email='janne.ronkko@iki.fi',
     license='MIT',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
@@ -41,11 +41,11 @@ setuptools.setup(
         'Topic :: System :: Archiving :: Packaging',
     ],
     keywords='setuptools development git version',
-    packages=['setuptools_autover'],
+    packages=['vcsver'],
     python_requires='>=3.5',
     entry_points={
         'distutils.setup_keywords': [
-            'use_autover = setuptools_autover.setuptools:use_autover',
+            'vcsver = vcsver.setuptools:vcsver',
         ],
     },
 )
