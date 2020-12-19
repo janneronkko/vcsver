@@ -125,7 +125,7 @@ that are mapped to actual values.
 
   The function takes one argument of type *vcsver.VersionInfo*. 
 
-  Default value: :code:`vcsver.pep440.post_with_dev`
+  Default value: :code:`vcsver.pep440.post`
 
   Available identifiers:
 
@@ -140,7 +140,7 @@ Configuration matching the default settings:
         'root_version': '0',
         'read_revision_info': vcsver.GitRevisionInfoReader(),
         'parse_tag': lambda tag: tag,
-        'create_version': vcsver.pep440.post_with_dev,
+        'create_version': vcsver.pep440.post,
     }
 
 The same configuration can also be defined without importing *vcsver*:
@@ -151,7 +151,7 @@ The same configuration can also be defined without importing *vcsver*:
         'root_version': '0',
         'read_revision_info': 'git',
         'parse_tag': 'plain',
-        'create_version': 'pep440.post_with_dev',
+        'create_version': 'pep440.post',
     }
 
 API
@@ -160,7 +160,7 @@ API
 Functions
 ---------
 
-**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.post_with_dev)**
+**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.post)**
   The arguments are the same as the configurations passed for *vcsver* argument from *setup.py*
 
   Return generated version

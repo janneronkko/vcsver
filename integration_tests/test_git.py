@@ -82,7 +82,7 @@ def test_get_version_defined_in_setup_py(test_project):
 @pytest.mark.parametrize(
     ('setuptools_kwargs', 'dev_version_format_string'),
     (
-        (None, '{tag}.post0.dev{dist}+{hash}'),
+        (None, '{tag}.post{dist}+{hash}'),
         ({'vcsver': {'create_version': 'pep440.post'}}, '{tag}.post{dist}+{hash}'),
         ({'vcsver': {'create_version': 'pep440.post_with_dev'}}, '{tag}.post0.dev{dist}+{hash}'),
     ),
