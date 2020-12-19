@@ -1,6 +1,8 @@
 import os
 import subprocess
 
+import pytest
+
 from . import util
 
 
@@ -77,7 +79,20 @@ def test_get_version_defined_in_setup_py(test_project):
     test_project.assert_current_version('2.1')
 
 
-def test_get_version_from_history(test_project):
+@pytest.mark.parametrize(
+    'setuptools_kwargs',
+    (
+        None,
+        {'vcsver': {'create_version': 'pep440.post_with_dev'}},
+    ),
+)
+def test_get_version_from_history(
+    test_project,
+    setuptools_kwargs,
+):
+    if setuptools_kwargs:
+        test_project.set_setup_kwargs(**setuptools_kwargs)
+
     vcs = Git(test_project.path)
 
     test_project.assert_current_version('{}+dirty'.format(test_project.root_version))

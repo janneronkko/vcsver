@@ -1,16 +1,19 @@
 import collections.abc
 
+from . import config
 from .vcsver import get_version
 
 
 def vcsver(dist, attr, value):  # pylint: disable=unused-argument
-    get_version_kwargs = dist.vcsver
+    config_from_setuptools = dist.vcsver
 
-    if not isinstance(get_version_kwargs, collections.abc.Mapping):
-        if not get_version_kwargs:
+    if not isinstance(config_from_setuptools, collections.abc.Mapping):
+        if not config_from_setuptools:
             return
 
-        get_version_kwargs = {}
+        config_from_setuptools = {}
+
+    get_version_kwargs = config.get_version_kwargs(config_from_setuptools)
 
     version = get_version(**get_version_kwargs)
     if version is not None:

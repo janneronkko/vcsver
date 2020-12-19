@@ -1,15 +1,14 @@
 from . import errors
-from . import git
-from . import pep440
+from . import config
 from . import types
 from . import util
 
 
 def get_version(
-    root_version='0',
-    read_revision_info=git.GitRevisionInfoReader(),
-    parse_tag=lambda tag: tag,
-    create_version=pep440.post_with_dev,
+    root_version=config.DEFAULT_ROOT_VERSION,
+    read_revision_info=config.DEAULT_READ_REVISION_INFO,
+    parse_tag=config.DEFAULT_PARSE_TAG,
+    create_version=config.DEFAULT_CREATE_VERSION,
 ):
     revision_info = read_revision_info()
 

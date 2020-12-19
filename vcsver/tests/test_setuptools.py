@@ -1,7 +1,6 @@
-import collections
-
 import pytest
 
+from .. import config
 from .. import setuptools
 
 
@@ -41,11 +40,9 @@ def test_vcsver(
         return
 
     if isinstance(vcsver, dict):
-        expected_get_version_call_kwargs = collections.ChainMap(
-            vcsver,
-        )
+        expected_get_version_call_kwargs = config.get_version_kwargs(vcsver)
 
     else:
-        expected_get_version_call_kwargs = {}
+        expected_get_version_call_kwargs = config.get_version_kwargs({})
 
     get_version_mock.assert_called_once_with(**expected_get_version_call_kwargs)

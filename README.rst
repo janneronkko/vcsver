@@ -88,6 +88,9 @@ Configuration
 The *vcsver* argument can be used for configuring version generation behaviour
 by proving the configuration as mapping.
 
+The items in the mapping can either be actual Python objects or identifiers (strings)
+that are mapped to actual values.
+
 **root_version**
   If repository does not contain any tags, this string is used.
 
@@ -99,7 +102,11 @@ by proving the configuration as mapping.
   The function should not take any arguments and should return instance of *vcsver.RevisionInfo*
   or None in case revision info is not available.
 
-  By default :code:`vcsver.GitRevisionInfoReader` instance with default arguments is used.
+  Default value: :code:`vcsver.GitRevisionInfoReader()`
+
+  Available identifiers:
+
+  - :code:`git` Use *vcsvver.GitRevisionInfoReader* instance with default arguments
 
 **parse_tag**
   Function parsing version string from a tag.
@@ -109,12 +116,20 @@ by proving the configuration as mapping.
 
   Default value: :code:`lambda tag: tag`
 
+  Available identifiers:
+
+  - :code:`plain` Use the tag as it is in the version control system
+
 **create_version**
   Function creating version string from *vcsver.VersionInfo*.
 
   The function takes one argument of type *vcsver.VersionInfo*. 
 
   Default value: :code:`vcsver.pep440.post_with_dev`
+
+  Available identifiers:
+
+  - :code:`pep440.post_with_dev` PEP 440 string using post0+devN
 
 Configuration matching the default settings:
 
@@ -125,6 +140,17 @@ Configuration matching the default settings:
         'read_revision_info': vcsver.GitRevisionInfoReader(),
         'parse_tag': lambda tag: tag,
         'create_version': vcsver.pep440.post_with_dev,
+    }
+
+The same configuration can also be defined without importing *vcsver*:
+
+.. code:: python
+
+    {
+        'root_version': '0',
+        'read_revision_info': 'git',
+        'parse_tag': 'plain',
+        'create_version': 'pep440.post_with_dev',
     }
 
 API
