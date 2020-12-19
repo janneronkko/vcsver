@@ -21,7 +21,7 @@ def test_pep440_post_with_dev(version_info, expected_version_string):
     assert pep440.post_with_dev(version_info) == expected_version_string
 
 
-_VERSIONS = (
+_PEP440_POST_WITH_DEV_VERSIONS = (
     '1.0',
     '1.0.post0.dev1',
     '1.1.dev0',
@@ -31,9 +31,16 @@ _VERSIONS = (
 )
 
 
+def _version_order_cases(version_strings):
+    return list(zip(
+        version_strings,
+        version_strings[1:],
+    ))
+
+
 @pytest.mark.parametrize(
     ('prev_version', 'next_version'),
-    list(zip(_VERSIONS, _VERSIONS[1:])),
+    _version_order_cases(_PEP440_POST_WITH_DEV_VERSIONS),
 )
 def test_version_ordering(prev_version, next_version):
     prev_version = parse_version(prev_version)
