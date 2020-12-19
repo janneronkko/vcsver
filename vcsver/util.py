@@ -1,4 +1,7 @@
-def parse_pkg_info_file(path):
+import typing
+
+
+def parse_pkg_info_file(path: str) -> typing.Dict[str, str]:
     with open(path, 'rt') as pkg_info_file:
         return {
             key.strip(): value.strip()

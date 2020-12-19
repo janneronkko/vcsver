@@ -1,4 +1,7 @@
-def post(version_info):
+from . import types
+
+
+def post(version_info: types.VersionInfo) -> str:
     latest_version = version_info.latest_release
 
     dirty_separator = '+'
@@ -16,7 +19,7 @@ def post(version_info):
     return latest_version
 
 
-def post_with_dev(version_info):
+def post_with_dev(version_info: types.VersionInfo) -> str:
     latest_version = version_info.latest_release
 
     dirty_separator = '+'

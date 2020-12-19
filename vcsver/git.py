@@ -1,17 +1,21 @@
 import re
 import subprocess
+import typing
 
 from . import types
 
 
 class GitRevisionInfoReader:
-    def __init__(self, path=None):
+    def __init__(
+        self,
+        path: typing.Optional[str] = None,  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    ) -> None:
         super().__init__()
 
-        self._path = path
-        self._abbrev = 10
+        self._path: typing.Optional[str] = path  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+        self._abbrev: int = 10
 
-    def __call__(self):
+    def __call__(self) -> typing.Optional[types.RevisionInfo]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object,line-too-long
         top_level_path = self._get_top_level_path()
         if top_level_path is None:
             return None
@@ -54,7 +58,7 @@ class GitRevisionInfoReader:
 
         return revision_data
 
-    def _parse_describe_output(self, describe_output):
+    def _parse_describe_output(self, describe_output: str) -> types.RevisionInfo:
         match = re.match(
             r'^'
             r'((?P<tag>.+)-(?P<distance>\d+)-g)?'
@@ -63,11 +67,15 @@ class GitRevisionInfoReader:
             r'$',
             describe_output,
         )
+        assert match, describe_output
 
         describe_components = match.groupdict()
-        distance = describe_components.get('distance')
-        if distance is not None:
-            distance = int(distance)
+
+        distance: typing.Optional[int] = None  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+
+        distance_string = describe_components.get('distance')
+        if distance_string is not None:
+            distance = int(distance_string)
 
         dirty = describe_components['dirty_flag'] == '-dirty'
 
@@ -78,7 +86,7 @@ class GitRevisionInfoReader:
             dirty=dirty,
         )
 
-    def _get_top_level_path(self):
+    def _get_top_level_path(self) -> typing.Optional[str]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object
         result = self._run_git(
             'rev-parse',
             '--show-toplevel',
@@ -89,7 +97,11 @@ class GitRevisionInfoReader:
 
         return result.stdout.decode().strip()
 
-    def _run_git(self, *args, **run_args):
+    def _run_git(
+        self,
+        *args: typing.Any,
+        **run_args: typing.Any,
+    ) -> subprocess.CompletedProcess:
         run_args.setdefault('stdout', subprocess.PIPE)
         run_args.setdefault('stderr', subprocess.PIPE)
 

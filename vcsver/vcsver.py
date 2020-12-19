@@ -1,3 +1,5 @@
+import typing
+
 from . import errors
 from . import config
 from . import types
@@ -5,11 +7,11 @@ from . import util
 
 
 def get_version(
-    root_version=config.DEFAULT_ROOT_VERSION,
-    read_revision_info=config.DEAULT_READ_REVISION_INFO,
-    parse_tag=config.DEFAULT_PARSE_TAG,
-    create_version=config.DEFAULT_CREATE_VERSION,
-):
+    root_version: str = config.DEFAULT_ROOT_VERSION,
+    read_revision_info: config.RevisionInfoReader = config.DEAULT_READ_REVISION_INFO,
+    parse_tag: config.TagParser = config.DEFAULT_PARSE_TAG,
+    create_version: config.VersionStringFactory = config.DEFAULT_CREATE_VERSION,
+) -> str:
     revision_info = read_revision_info()
 
     if revision_info is None:
@@ -35,7 +37,7 @@ def get_version(
     return create_version(version_data)
 
 
-def get_version_from_pkg_info_file():
+def get_version_from_pkg_info_file() -> typing.Optional[str]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object,line-too-long
     try:
         return util.parse_pkg_info_file('PKG-INFO')['Version']
 
