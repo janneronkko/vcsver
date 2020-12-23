@@ -1,13 +1,15 @@
-import collections
+import typing
 
 
-RevisionInfo = collections.namedtuple(
-    'RevisionInfo',
-    ('latest_tag', 'distance', 'commit', 'dirty'),
-)
+class RevisionInfo(typing.NamedTuple):  # Pylint issue 3876 pylint: disable=inherit-non-class
+    latest_tag: typing.Optional[str]  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    distance: typing.Optional[int]  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    commit: typing.Optional[str]  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    dirty: bool
 
 
-VersionInfo = collections.namedtuple(
-    'VersionInfo',
-    ('latest_release', 'distance', 'commit', 'dirty'),
-)
+class VersionInfo(typing.NamedTuple):  # Pylint issue 3876 pylint: disable=inherit-non-class
+    latest_release: str
+    distance: typing.Optional[int]  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    commit: typing.Optional[str]  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    dirty: bool
