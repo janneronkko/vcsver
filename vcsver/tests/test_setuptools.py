@@ -12,6 +12,7 @@ from .. import setuptools
         ({}, '1.2.3'),
         ({'root_version': '1.0'}, '1.2.3'),
         ({'parse_tag': 'plain'}, '1.2.3'),
+        ({'create_version': 'pep440.post_with_dev'}, '1.2.3'),
     ),
 )
 def test_vcsver(
