@@ -11,6 +11,7 @@ from .. import setuptools
         (True, '1.2.3'),
         ({}, '1.2.3'),
         ({'root_version': '1.0'}, '1.2.3'),
+        ({'parse_tag': 'plain'}, '1.2.3'),
     ),
 )
 def test_vcsver(

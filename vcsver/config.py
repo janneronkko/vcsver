@@ -59,7 +59,7 @@ def _get_revision_info_reader(config: ConfigDict) -> RevisionInfoReader:
 def _get_parse_tag(config: ConfigDict) -> TagParser:
     parse_tag = config.get('parse_tag', DEFAULT_PARSE_TAG)
     if isinstance(parse_tag, str):
-        parse_tag = VERSION_SCHEMAS[parse_tag]
+        parse_tag = TAG_PARSERS[parse_tag]
 
     return parse_tag
 
