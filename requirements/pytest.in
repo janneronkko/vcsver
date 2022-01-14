@@ -1,6 +1,8 @@
+build
 mako
 packaging
 pytest
 pytest-cov
 pytest-mock
 pytest-subprocess
+wheel
