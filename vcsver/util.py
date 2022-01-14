@@ -2,7 +2,7 @@ import typing
 
 
 def parse_pkg_info_file(path: str) -> typing.Dict[str, str]:
-    with open(path, 'rt') as pkg_info_file:
+    with open(path, 'rt', encoding='utf-8') as pkg_info_file:
         return {
             key.strip(): value.strip()
             for key, value in (

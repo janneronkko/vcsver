@@ -212,14 +212,14 @@ class TestProject:
 
     def _write_template(self, file_name, context):
         template = mako.template.Template(
-            filename=os.path.join(TEMPLATE_DIR, '{}.tmpl'.format(file_name)),
+            filename=os.path.join(TEMPLATE_DIR, f'{file_name}.tmpl'),
         )
 
         contents = template.render(
             **context,
         )
 
-        with open(os.path.join(self.path, file_name), 'wt') as target_file:
+        with open(os.path.join(self.path, file_name), 'wt', encoding='utf-8') as target_file:
             target_file.write(contents)
 
     def assert_current_version(self, expected_version):
@@ -300,7 +300,7 @@ class TestProject:
         dist_dir = os.path.join(
             self.path,
             'dist',
-            '{:0>4}'.format(next(self._dist_seqnum)),
+            f'{next(self._dist_seqnum):0>4}',
         )
 
         self.virtualenv.run_python_with_coverage(

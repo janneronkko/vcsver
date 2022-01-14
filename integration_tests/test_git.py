@@ -22,21 +22,21 @@ class Git:
         return self._get_head_sha()[:10]
 
     def create_commit(self):
-        with open(os.path.join(self.repo_dir, 'dummy.txt'), 'at+') as dummy_file:
+        with open(os.path.join(self.repo_dir, 'dummy.txt'), 'at+', encoding='utf-8') as dummy_file:
             dummy_file.seek(0)
             change_number = len(dummy_file.read().split('\n'))
 
-            dummy_file.write('Dummy change {}\n'.format(change_number))
+            dummy_file.write('Dummy change {change_number}\n')
 
         self._run_git('add', 'dummy.txt')
 
-        self._run_git('commit', '-m', 'Dummy change {}'.format(change_number))
+        self._run_git('commit', '-m', f'Dummy change {change_number}')
 
     def create_tag(self, tag_name):
         self._run_git(
             'tag',
             '-a',
-            '-m', 'Tag {}'.format(tag_name),
+            '-m', f'Tag {tag_name}',
             tag_name,
             'HEAD',
         )
@@ -97,7 +97,7 @@ def test_get_version_from_history(
 
     vcs = Git(test_project.path)
 
-    test_project.assert_current_version('{}+dirty'.format(test_project.root_version))
+    test_project.assert_current_version(f'{test_project.root_version}+dirty')
 
     vcs.create_commit()
     test_project.assert_current_version(
