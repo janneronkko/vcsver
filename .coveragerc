@@ -6,7 +6,6 @@ include =
 
 omit =
     */venv/*
-    run_tests.py
     setup.py
 
 [report]
