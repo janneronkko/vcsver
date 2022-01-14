@@ -197,7 +197,7 @@ Classes
 -------
 
 vcsver.GitRevisionInfoReader
-****************************************
+****************************
 
 Read revision info from Git repository.
 
