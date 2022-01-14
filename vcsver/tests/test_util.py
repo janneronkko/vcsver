@@ -15,6 +15,7 @@ def test_parsing_pkg_info_file(mocker):
     open_mock = open_mock.assert_called_once_with(
         mocker.sentinel.path,
         'rt',
+        encoding='utf-8',
     )
 
     assert {

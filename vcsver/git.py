@@ -25,7 +25,7 @@ class GitRevisionInfoReader:
             '--dirty',
             '--always',
             '--long',
-            '--abbrev={self._abbrev}',
+            f'--abbrev={self._abbrev}',
         )
 
         if git_describe.returncode != 0:
