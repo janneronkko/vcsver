@@ -26,14 +26,7 @@ class PackagingImplementation(abc.ABC):
         pass
 
 
-class SetuptoolsWithoutPep518:
-    pass
-
-
-class SetuptoolsSetupPy(
-    SetuptoolsWithoutPep518,
-    PackagingImplementation,
-):
+class SetuptoolsSetupPy(PackagingImplementation):
     def __init__(
         self,
         venv: VirtualEnv,

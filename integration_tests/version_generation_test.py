@@ -41,7 +41,7 @@ class VersionGenerationTest:
         self.packaging_impl.build(project.path)
 
         for dist_type, dist_file_path in project.get_dist_files().items():
-            if dist_type == 'sdist' and isinstance(self.packaging_impl, packaging.SetuptoolsWithoutPep518):
+            if dist_type == 'sdist' and self.is_setuptools_without_pyproject_toml(project):
                 self.install_setuptools_package_without_pep518_from_sdist(dist_file_path)
 
             else:
@@ -51,6 +51,18 @@ class VersionGenerationTest:
             assert installed[package_name] == expected_version, (dist_type, type(project), project)
 
             self.virtualenv.uninstall(package_name)
+
+    def is_setuptools_without_pyproject_toml(
+        self,
+        project: pythonproject.PythonProject,
+    ) -> bool:
+        if project.path.joinpath('pyproject.toml').is_file():
+            return False
+
+        return (
+            project.path.joinpath('setup.py').is_file()
+            or project.path.joinpath('setup.cfg').is_file()
+        )
 
     def install_setuptools_package_without_pep518_from_sdist(
         self,
