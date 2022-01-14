@@ -31,8 +31,8 @@ def test_vcsver(
 
     setuptools.vcsver(
         dist_mock,
-        mocker.sentinel.attr,
-        mocker.sentinel.value,
+        'vcsver',
+        vcsver,
     )
 
     assert dist_mock.metadata.version == expected_version
