@@ -1,6 +1,9 @@
 build
 mako
+mypy
 packaging
+pycodestyle
+pylint
 pytest
 pytest-cov
 pytest-mock
