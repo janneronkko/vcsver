@@ -48,7 +48,10 @@ class VersionGenerationTest:
                 self.virtualenv.install(str(dist_file_path))
 
             installed = self.virtualenv.get_installed()
-            assert installed[package_name] == expected_version, (dist_type, type(project), project)
+            assert installed[package_name] == expected_version, (
+                f'{installed[package_name]} != {expected_version}',
+                dist_type,
+            )
 
             self.virtualenv.uninstall(package_name)
 
