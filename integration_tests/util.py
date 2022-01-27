@@ -63,7 +63,7 @@ def render_template(
 
     contents = template.render(**context)
 
-    print('=== {dest.name} ===')
+    print(f'=== {dest.name} ===')
     for line in contents.split('\n'):
         print(f'> {line.rstrip()}')
 
