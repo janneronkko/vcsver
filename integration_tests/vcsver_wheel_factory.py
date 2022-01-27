@@ -21,7 +21,7 @@ class VcsverWheelFactory:
     def __call__(self) -> pathlib.Path:
         if self._path is None:
             dist_dir = pathlib.Path(
-                str(self._tmpdir_factory.mktemp('setup_py_virtualenv')),
+                str(self._tmpdir_factory.mktemp('vcsver_dist')),
             )
             util.run(
                 sys.executable,
