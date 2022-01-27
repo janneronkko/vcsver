@@ -26,7 +26,7 @@ class PackagingImplementation(abc.ABC):
         pass
 
 
-class SetuptoolsSetupPy(PackagingImplementation):
+class SetuptoolsWithSetupPy(PackagingImplementation):
     def __init__(
         self,
         venv: VirtualEnv,

@@ -87,7 +87,7 @@ def _packaging_impl(
         str(get_vcsver_wheel_path()),
     )
 
-    return packaging.SetuptoolsSetupPy(venv)
+    return packaging.SetuptoolsWithSetupPy(venv)
 
 
 @pytest.fixture(
