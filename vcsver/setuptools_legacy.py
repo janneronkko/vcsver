@@ -1,3 +1,5 @@
+# This module contains support for Setuptools via vcsver argument in setup() call in setup.py
+
 import collections.abc
 import typing
 

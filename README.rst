@@ -15,10 +15,12 @@ version control systems.
 Usage
 =====
 
-setup.py
---------
+Via setup.py
+------------
 
-1. Add *vcsver* to *setup_requires* argument
+**Note that this method is deprecated and will be removed in the future releases.**
+
+1. Add *vcsver* to *setup_requires*
 2. Set *vcsver* argument
     The value can be mapping, (a dict, for example) containing configuration or
     any Python value that evaluates as True.
@@ -54,22 +56,8 @@ Use with custom settings
 Note that if the *setup* function is called for source tree not having version info available,
 *vcsver.RevisionInfoNotFoundError* is raised.
 
-Version Number Generation
-=========================
-
-When building package from code in a repository, *vcsver.RevisionInfo* object is filled
-based on current revision.
-
-If latest tag is available, latest release version is read from it by using *parse_tag*
-function. Otherwise *root_version* is used as latest version and distance is the number
-of commits since the start of the commit history.
-
-The version string is generated based on the above info using the *create_version* function.
-
-If package is being built from extracted *sdist*, version information is read from *PKG-INFO*.
-
 Configuration
-=============
+*************
 
 The *vcsver* argument can be used for configuring version generation behaviour
 by proving the configuration as mapping.
@@ -139,6 +127,21 @@ The same configuration can also be defined without importing *vcsver*:
         'parse_tag': 'plain',
         'create_version': 'pep440.post',
     }
+
+
+Version Number Generation
+=========================
+
+When building package from code in a repository, *vcsver.RevisionInfo* object is filled
+based on current revision.
+
+If latest tag is available, latest release version is read from it by using *parse_tag*
+function. Otherwise *root_version* is used as latest version and distance is the number
+of commits since the start of the commit history.
+
+The version string is generated based on the above info using the *create_version* function.
+
+If package is being built from extracted *sdist*, version information is read from *PKG-INFO*.
 
 API
 ===

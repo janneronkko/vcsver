@@ -1,6 +1,6 @@
 import pytest
 
-from .. import setuptools
+from .. import setuptools_legacy
 from .. import types
 
 
@@ -29,7 +29,7 @@ def test_vcsver(
     )
 
     get_revision_info_reader_mock = mocker.patch(
-        'vcsver.setuptools._get_revision_info_reader',
+        'vcsver.setuptools_legacy._get_revision_info_reader',
         revision_info_reader_mock,
     )
 
@@ -37,7 +37,7 @@ def test_vcsver(
     dist_mock.vcsver = vcsver
     dist_mock.metadata.version = None
 
-    setuptools.vcsver(
+    setuptools_legacy.vcsver(
         dist_mock,
         'vcsver',
         vcsver,
