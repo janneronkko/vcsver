@@ -71,6 +71,12 @@ def render_template(
         target_file.write(contents)
 
 
+def log_test_state(state: str) -> None:
+    sys.stdout.write('\n')
+    sys.stdout.write(colors.color(state, fg='blue', style='bold'))
+    sys.stdout.write('\n')
+
+
 def log_commandline(
     cwd: str,
     command: typing.Iterable[str],

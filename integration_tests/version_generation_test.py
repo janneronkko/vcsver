@@ -9,6 +9,7 @@ from .virtualenv import VirtualEnv
 from . import (
     packaging,
     pythonproject,
+    util,
 )
 
 
@@ -33,12 +34,14 @@ class VersionGenerationTest:
     ) -> None:
         package_name = 'vcsver-test-project'
 
+        util.log_test_state('Creating packaging files')
         self.packaging_impl.create_packaging_files(
             project.path,
             name=package_name,
             **create_packaging_files_kwargs,
         )
 
+        util.log_test_state('Building dist files')
         self.packaging_impl.build(project.path)
 
         test_install_dist_files = functools.partial(
@@ -54,6 +57,7 @@ class VersionGenerationTest:
         sdist = dist_files.get('sdist')
         if sdist:
             with self.extracted_sdist(sdist) as sdist_project:
+                util.log_test_state('Building dist files using sdist')
                 self.packaging_impl.build(sdist_project.path)
 
                 test_install_dist_files(sdist_project.get_dist_files())
@@ -65,6 +69,7 @@ class VersionGenerationTest:
         expected_version: str,
     ) -> None:
         for dist_type, dist_file_path in dist_files.items():
+            util.log_test_state(f'Testing {dist_type}')
             if dist_type == 'sdist' and not self.packaging_impl.supports_build_time_dependencies:
                 self.virtualenv.install(str(self.get_vcsver_wheel_path()))
 
