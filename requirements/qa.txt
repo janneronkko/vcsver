@@ -4,6 +4,8 @@
 #
 #    pip-compile --output-file=requirements/qa.txt requirements/qa.in
 #
+ansicolors==1.1.8
+    # via -r requirements/qa.in
 astroid==2.9.3
     # via pylint
 attrs==21.4.0

@@ -1,8 +1,10 @@
 import pathlib
 import os
 import subprocess
+import sys
 import typing
 
+import colors
 import mako.template
 
 
@@ -22,34 +24,32 @@ def run(*cmd, **kwargs):
 
     kwargs.setdefault('text', True)
 
-    command_string = ' '.join(
-        f'"{arg}"' if ' ' in arg else arg
-        for arg in cmd
+    log_commandline(
+        kwargs.get('cwd', os.getcwd()),
+        cmd,
     )
-    cwd = kwargs.get('cwd', os.getcwd())
-    print(f'\n{cwd} $ {command_string}')
 
     try:
         process = subprocess.run(cmd, **kwargs)  # pylint: disable=subprocess-run-check
 
-        _print_output(process.stdout, process.stderr)
+        _log_process_output(process.stdout, process.stderr)
 
     except subprocess.CalledProcessError as err:
-        _print_output(err.output, err.stderr)
+        _log_process_output(err.output, err.stderr)
 
         raise
 
     return process
 
 
-def _print_output(stdout, stderr):
+def _log_process_output(stdout, stderr):
     output = stderr or stdout
 
     if not output:
         return
 
     for line in output.split('\n'):
-        print(f'> {line.rstrip()}')
+        log_output(line.rstrip())
 
 
 def render_template(
@@ -63,9 +63,35 @@ def render_template(
 
     contents = template.render(**context)
 
-    print(f'=== {dest.name} ===')
+    log_heading(dest.name)
     for line in contents.split('\n'):
-        print(f'> {line.rstrip()}')
+        log_output(line.rstrip())
 
     with open(dest, 'wt', encoding='utf-8') as target_file:
         target_file.write(contents)
+
+
+def log_commandline(
+    cwd: str,
+    command: typing.Iterable[str],
+) -> None:
+    command_string = ' '.join(
+        f'"{arg}"' if ' ' in arg else arg
+        for arg in command
+    )
+
+    sys.stdout.write('\n')
+    sys.stdout.write(colors.color(cwd, fg='blue'))
+    sys.stdout.write(f' $ {command_string}\n')
+
+
+def log_heading(heading: str) -> None:
+    sys.stdout.write('=== ')
+    sys.stdout.write(colors.color(heading, style='bold'))
+    sys.stdout.write(' ===\n')
+
+
+def log_output(output: str) -> None:
+    sys.stdout.write('> ')
+    sys.stdout.write(colors.color(f'{output.rstrip()}', fg='gray'))
+    sys.stdout.write('\n')
