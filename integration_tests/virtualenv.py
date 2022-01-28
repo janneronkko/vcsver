@@ -59,6 +59,7 @@ class VirtualEnv:
         util.run(
             self.pip,
             'uninstall',
+            '--yes',
             '-r', str(installed_pkgs_file_path),
             check=True,
         )
