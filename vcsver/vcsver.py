@@ -1,16 +1,15 @@
 import typing
 
 from . import errors
-from . import config
 from . import types
 from . import util
 
 
 def get_version(
     root_version: str,
-    read_revision_info: config.RevisionInfoReader,
-    parse_tag: config.TagParser,
-    create_version: config.VersionStringFactory,
+    read_revision_info: types.RevisionInfoReader,
+    parse_tag: types.TagParser,
+    create_version: types.VersionStringFactory,
 ) -> str:
     revision_info = read_revision_info()
 
