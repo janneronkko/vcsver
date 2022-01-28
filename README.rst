@@ -57,10 +57,7 @@ Note that if the *setup* function is called for source tree not having version i
 Version Number Generation
 =========================
 
-If setup.py is not run on code in a repository, version information is read from *PKG-INFO* to
-allow *sdist* to work.
-
-When running setup.py on code in a repository, *vcsver.RevisionInfo* object is filled
+When building package from code in a repository, *vcsver.RevisionInfo* object is filled
 based on current revision.
 
 If latest tag is available, latest release version is read from it by using *parse_tag*
@@ -68,6 +65,8 @@ function. Otherwise *root_version* is used as latest version and distance is the
 of commits since the start of the commit history.
 
 The version string is generated based on the above info using the *create_version* function.
+
+If package is being built from extracted *sdist*, version information is read from *PKG-INFO*.
 
 Configuration
 =============
