@@ -8,7 +8,7 @@ from . import util
 
 def get_version(
     root_version: str = config.DEFAULT_ROOT_VERSION,
-    read_revision_info: config.RevisionInfoReader = config.DEAULT_READ_REVISION_INFO,
+    read_revision_info: config.RevisionInfoReader = config.DEFAULT_READ_REVISION_INFO,
     parse_tag: config.TagParser = config.DEFAULT_PARSE_TAG,
     create_version: config.VersionStringFactory = config.DEFAULT_CREATE_VERSION,
 ) -> str:

@@ -34,7 +34,7 @@ VERSION_SCHEMAS: typing.Dict[str, VersionStringFactory] = {
 
 
 DEFAULT_ROOT_VERSION: str = '0'
-DEAULT_READ_REVISION_INFO: RevisionInfoReader = REVISION_INFO_READERS['git']()
+DEFAULT_READ_REVISION_INFO: RevisionInfoReader = REVISION_INFO_READERS['git']()
 DEFAULT_PARSE_TAG: TagParser = TAG_PARSERS['plain']
 DEFAULT_CREATE_VERSION: VersionStringFactory = VERSION_SCHEMAS['pep440.post']
 
@@ -49,7 +49,7 @@ def get_version_kwargs(config: ConfigDict) -> typing.Dict[str, typing.Any]:
 
 
 def _get_revision_info_reader(config: ConfigDict) -> RevisionInfoReader:
-    revision_info_reader = config.get('read_revision_info', DEAULT_READ_REVISION_INFO)
+    revision_info_reader = config.get('read_revision_info', DEFAULT_READ_REVISION_INFO)
     if isinstance(revision_info_reader, str):
         revision_info_reader = REVISION_INFO_READERS[revision_info_reader]()
 
