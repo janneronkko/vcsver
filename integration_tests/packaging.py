@@ -29,11 +29,17 @@ class PackagingImplementation(abc.ABC):
 class SetuptoolsWithSetupPy(PackagingImplementation):
     def __init__(
         self,
+        vcsver_wheel_path: pathlib.Path,
         venv: VirtualEnv,
     ) -> None:
         super().__init__()
 
         self._venv = venv
+
+        self._venv.install(
+            'wheel',
+            str(vcsver_wheel_path),
+        )
 
     def create_packaging_files(
         self,

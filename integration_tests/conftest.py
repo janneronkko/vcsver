@@ -15,6 +15,23 @@ from . import (
 )
 
 
+PACKAGING_IMPLEMENTATIONS = {
+    'setuptools-with-setup-py': lambda vcsver_wheel_path, tmpdir_factory: packaging.SetuptoolsWithSetupPy(
+        vcsver_wheel_path,
+        VirtualEnv.create(tmpdir_factory.mktemp('venv-setup.py_only')),
+    ),
+}
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        '--vcsver-packaging',
+        action='append',
+        help='Set packaging implementations to use.',
+        choices=list(PACKAGING_IMPLEMENTATIONS),
+    )
+
+
 @pytest.fixture(
     scope='session',
     name='get_vcsver_wheel_path',
@@ -72,22 +89,30 @@ def _test_project_git_clone(tmpdir_factory):
     )
 
 
+def pytest_generate_tests(metafunc):
+    if 'packaging_impl' not in metafunc.fixturenames:
+        return
+
+    metafunc.parametrize(
+        'packaging_impl',
+        metafunc.config.getoption('vcsver_packaging') or list(PACKAGING_IMPLEMENTATIONS),
+        indirect=True,
+    )
+
+
 @pytest.fixture(
     scope='session',
     name='packaging_impl',
 )
 def _packaging_impl(
+    request,
     tmpdir_factory,
     get_vcsver_wheel_path,
 ):
-    venv = VirtualEnv.create(tmpdir_factory.mktemp('setup_py_virtualenv'))
-
-    venv.install(
-        'wheel',
-        str(get_vcsver_wheel_path()),
+    return PACKAGING_IMPLEMENTATIONS[request.param](
+        get_vcsver_wheel_path(),
+        tmpdir_factory,
     )
-
-    return packaging.SetuptoolsWithSetupPy(venv)
 
 
 @pytest.fixture(
