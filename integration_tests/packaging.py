@@ -7,6 +7,10 @@ from . import util
 
 
 class PackagingImplementation(abc.ABC):
+    @property
+    def supports_build_time_dependencies(self) -> bool:
+        return True
+
     @abc.abstractmethod
     def create_packaging_files(
         self,
@@ -27,6 +31,11 @@ class PackagingImplementation(abc.ABC):
 
 
 class SetuptoolsWithSetupPy(PackagingImplementation):
+    @property
+    def supports_build_time_dependencies(self) -> bool:
+        # setup.py's setup_requires only allows package names, i.e. you can only depend on released versions this way
+        return False
+
     def __init__(
         self,
         vcsver_wheel_path: pathlib.Path,
