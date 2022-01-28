@@ -29,7 +29,7 @@ def test_vcsver(
     )
 
     get_revision_info_reader_mock = mocker.patch(
-        'vcsver.config._get_revision_info_reader',
+        'vcsver.setuptools._get_revision_info_reader',
         revision_info_reader_mock,
     )
 
