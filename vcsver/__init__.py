@@ -1,7 +1,3 @@
-from .vcsver import (
-    get_version,
-)
-
 from .errors import (
     VcsverError,
     RevisionInfoNotFoundError,

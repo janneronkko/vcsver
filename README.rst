@@ -54,19 +54,6 @@ Use with custom settings
 Note that if the *setup* function is called for source tree not having version info available,
 *vcsver.RevisionInfoNotFoundError* is raised.
 
-From Python Code
-----------------
-
-.. code:: python
-
-    from vcsver import get_version
-
-    # Using default settings
-    version = get_version()
-
-    # Using custom settings
-    version = get_version(root_version='0.0')
-
 Version Number Generation
 =========================
 
@@ -159,11 +146,6 @@ API
 
 Functions
 ---------
-
-**vcsver.get_version(root_version='0', parse_tag=lambda tag: tag, create_version=pep440.post)**
-  The arguments are the same as the configurations passed for *vcsver* argument from *setup.py*
-
-  Return generated version
 
 **vcsver.pep440.post**
   Create version that uses *post* part for version between releases.
