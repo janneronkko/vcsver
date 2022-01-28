@@ -1,5 +1,8 @@
+import contextlib
 import functools
 import pathlib
+import tarfile
+import tempfile
 import typing
 
 from .virtualenv import VirtualEnv
@@ -48,6 +51,13 @@ class VersionGenerationTest:
 
         test_install_dist_files(dist_files)
 
+        sdist = dist_files.get('sdist')
+        if sdist:
+            with self.extracted_sdist(sdist) as sdist_project:
+                self.packaging_impl.build(sdist_project.path)
+
+                test_install_dist_files(sdist_project.get_dist_files())
+
     def _test_install_dist_files(
         self,
         dist_files: typing.Dict[str, pathlib.Path],
@@ -67,3 +77,26 @@ class VersionGenerationTest:
             )
 
             self.virtualenv.reset()
+
+    @contextlib.contextmanager
+    def extracted_sdist(
+        self,
+        sdist_tarbal_path: pathlib.Path,
+    ) -> typing.Generator[
+        pythonproject.PythonProject,
+        None,
+        None,
+    ]:
+        sdist_suffix = '.tar.gz'
+
+        assert sdist_tarbal_path.name.endswith(sdist_suffix), sdist_tarbal_path
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with tarfile.open(str(sdist_tarbal_path), 'r') as sdist_tarbal:
+                sdist_tarbal.extractall(temp_dir)
+
+            # .removesuffix is added in Python 3.9, i.e. when support for Python 3.8 is dropped, this can be
+            # updated to use .removesuffix
+            yield pythonproject.PythonProject(
+                pathlib.Path(temp_dir) / sdist_tarbal_path.name[:-len(sdist_suffix)],
+            )
