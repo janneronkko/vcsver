@@ -1,3 +1,4 @@
+import functools
 import pathlib
 import typing
 
@@ -37,9 +38,23 @@ class VersionGenerationTest:
 
         self.packaging_impl.build(project.path)
 
-        for dist_type, dist_file_path in project.get_dist_files().items():
-            self.virtualenv.reset()
+        test_install_dist_files = functools.partial(
+            self._test_install_dist_files,
+            package_name=package_name,
+            expected_version=expected_version,
+        )
 
+        dist_files = project.get_dist_files()
+
+        test_install_dist_files(dist_files)
+
+    def _test_install_dist_files(
+        self,
+        dist_files: typing.Dict[str, pathlib.Path],
+        package_name: str,
+        expected_version: str,
+    ) -> None:
+        for dist_type, dist_file_path in dist_files.items():
             if dist_type == 'sdist' and not self.packaging_impl.supports_build_time_dependencies:
                 self.virtualenv.install(str(self.get_vcsver_wheel_path()))
 
@@ -48,5 +63,7 @@ class VersionGenerationTest:
             installed = self.virtualenv.get_installed()
             assert installed[package_name] == expected_version, (
                 f'{installed[package_name]} != {expected_version}',
-                dist_type,
+                dist_file_path.name,
             )
+
+            self.virtualenv.reset()
