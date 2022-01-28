@@ -166,7 +166,7 @@ Functions
   Return generated version
 
 **vcsver.pep440.post**
-  Create version that uses *post* patr for version between releases.
+  Create version that uses *post* part for version between releases.
 
   The version is created using the following rules:
 
