@@ -7,10 +7,10 @@ from . import util
 
 
 def get_version(
-    root_version: str = config.DEFAULT_ROOT_VERSION,
-    read_revision_info: config.RevisionInfoReader = config.DEFAULT_READ_REVISION_INFO,
-    parse_tag: config.TagParser = config.DEFAULT_PARSE_TAG,
-    create_version: config.VersionStringFactory = config.DEFAULT_CREATE_VERSION,
+    root_version: str,
+    read_revision_info: config.RevisionInfoReader,
+    parse_tag: config.TagParser,
+    create_version: config.VersionStringFactory,
 ) -> str:
     revision_info = read_revision_info()
 
