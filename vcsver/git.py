@@ -8,14 +8,14 @@ from . import types
 class GitRevisionInfoReader:
     def __init__(
         self,
-        path: typing.Optional[str] = None,  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+        path: typing.Optional[str] = None,
     ) -> None:
         super().__init__()
 
-        self._path: typing.Optional[str] = path  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+        self._path: typing.Optional[str] = path
         self._abbrev: int = 10
 
-    def __call__(self) -> typing.Optional[types.RevisionInfo]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object,line-too-long
+    def __call__(self) -> typing.Optional[types.RevisionInfo]:
         top_level_path = self._get_top_level_path()
         if top_level_path is None:
             return None
@@ -71,7 +71,7 @@ class GitRevisionInfoReader:
 
         describe_components = match.groupdict()
 
-        distance: typing.Optional[int] = None  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+        distance: typing.Optional[int] = None
 
         distance_string = describe_components.get('distance')
         if distance_string is not None:
@@ -86,7 +86,7 @@ class GitRevisionInfoReader:
             dirty=dirty,
         )
 
-    def _get_top_level_path(self) -> typing.Optional[str]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object
+    def _get_top_level_path(self) -> typing.Optional[str]:
         result = self._run_git(
             'rev-parse',
             '--show-toplevel',

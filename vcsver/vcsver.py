@@ -37,7 +37,7 @@ def get_version(
     return create_version(version_data)
 
 
-def get_version_from_pkg_info_file() -> typing.Optional[str]:  # Pylint issue 3882 pylint: disable=unsubscriptable-object,line-too-long
+def get_version_from_pkg_info_file() -> typing.Optional[str]:
     try:
         return util.parse_pkg_info_file('PKG-INFO')['Version']
 

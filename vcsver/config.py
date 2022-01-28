@@ -5,7 +5,7 @@ from . import pep440
 from . import types
 
 
-RevisionInfoReader = typing.Callable[[], typing.Optional[types.RevisionInfo]]  # Pylint issue 3882 pylint: disable=unsubscriptable-object,line-too-long
+RevisionInfoReader = typing.Callable[[], typing.Optional[types.RevisionInfo]]
 RevisionInfoReaderFactory = typing.Callable[[], RevisionInfoReader]
 TagParser = typing.Callable[[str], str]
 VersionStringFactory = typing.Callable[[types.VersionInfo], str]
