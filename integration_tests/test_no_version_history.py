@@ -21,7 +21,7 @@ def test_get_version_from_vcs(
     packaging_impl.create_packaging_files(
         vcs_test_project_without_vcs.path,
         name='vcsver-test-project',
-        vcsver=True,
+        vcsver_enabled=True,
     )
 
     with pytest.raises(subprocess.CalledProcessError) as excinfo:

@@ -35,7 +35,7 @@ def test_version_from_git_history(
     version_generation_test(
         vcs_test_project_with_git_history,
         expected_version,
-        vcsver=True,
+        vcsver_enabled=True,
     )
 
 
@@ -48,7 +48,7 @@ def test_version_from_git_history_with_explicitly_set_version(
     version_generation_test(
         vcs_test_project_with_git_history,
         '1.0.1',
-        vcsver=True,
+        vcsver_enabled=True,
         manual_version='2.0',
     )
 
