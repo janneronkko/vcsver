@@ -1,12 +1,8 @@
 [run]
 branch = True
 
-include =
-    *
-
-omit =
-    */venv/*
-    setup.py
+source =
+    vcsver
 
 [report]
 show_missing = True
