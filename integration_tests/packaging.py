@@ -18,7 +18,7 @@ class PackagingImplementation(abc.ABC):
         *,
         name: str,
         manual_version: typing.Optional[str] = None,
-        vcsver_enabled: typing.Optional[bool] = None,
+        vcsver_enabled: bool = True,
     ) -> None:
         pass
 
@@ -56,7 +56,7 @@ class SetuptoolsWithSetupPy(PackagingImplementation):
         *,
         name: str,
         manual_version: typing.Optional[str] = None,
-        vcsver_enabled: typing.Optional[bool] = None,
+        vcsver_enabled: bool = True,
     ) -> None:
         setup_kwargs: typing.List[typing.Tuple[str, typing.Any]] = []
 

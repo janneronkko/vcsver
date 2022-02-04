@@ -61,7 +61,7 @@ def test_version_from_git_history_with_explicitly_set_version(
         'origin/main',
     ],
 )
-def test_manually_defined_version(
+def test_manually_defined_version_vcsver_disabled(
     vcs_test_project_with_git_history,
     version_generation_test,
     commit,
@@ -72,4 +72,5 @@ def test_manually_defined_version(
         vcs_test_project_with_git_history,
         '1.2.3',
         manual_version='1.2.3',
+        vcsver_enabled=False,
     )
