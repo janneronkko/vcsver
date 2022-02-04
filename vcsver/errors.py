@@ -5,6 +5,12 @@ class VcsverError(Exception):
     '''
 
 
+class InvalidConfigurationError(VcsverError):
+    '''
+    vcsver configuration is invalid.
+    '''
+
+
 class RevisionInfoNotFoundError(VcsverError):
     '''
     No version source data available; vcsver can not

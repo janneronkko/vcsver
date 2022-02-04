@@ -15,8 +15,16 @@ version control systems.
 Usage
 =====
 
-Via setup.py
-------------
+To enable automatic version in PEP 517 compatible way, configure source for versions
+in *tool.vcsver* table in *pyproject.toml*:
+
+.. code:: toml
+
+  [tool.vcsver]
+  source = "git"
+
+Setuptools without pyproject.toml
+---------------------------------
 
 **Note that this method is deprecated and will be removed in the future releases.**
 
@@ -202,6 +210,9 @@ Exceptions
 
 **vcsver.VcsverError**
   Base class for exceptions thrown by *vcsver*
+
+**vcsver.InvalidConfigurationError**
+  The configuration is invalid
 
 **vcsver.RevisionInfoNotFoundError**
   Version could not be generated because revision info was not found

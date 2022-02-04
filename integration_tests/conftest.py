@@ -20,6 +20,9 @@ PACKAGING_IMPLEMENTATIONS = {
         vcsver_wheel_path,
         VirtualEnv.create(tmpdir_factory.mktemp('venv-setup.py_only')),
     ),
+    'setuptools-with-pyproject-toml': lambda vcsver_wheel_path, tmpdir_factory: packaging.SetuptoolsWithPyprojectToml(
+        vcsver_wheel_path,
+    ),
 }
 
 

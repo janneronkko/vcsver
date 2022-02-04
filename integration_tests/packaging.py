@@ -1,5 +1,6 @@
 import abc
 import pathlib
+import sys
 import typing
 
 from .virtualenv import VirtualEnv
@@ -83,6 +84,53 @@ class SetuptoolsWithSetupPy(PackagingImplementation):
             'setup.py',
             'sdist',
             'bdist_wheel',
+            check=True,
+            cwd=str(project_dir),
+        )
+
+
+class SetuptoolsWithPyprojectToml(PackagingImplementation):
+    def __init__(
+        self,
+        vcsver_wheel_path: pathlib.Path,
+    ) -> None:
+        super().__init__()
+
+        self.vcsver_wheel_path = vcsver_wheel_path
+
+    def create_packaging_files(
+        self,
+        project_dir: pathlib.Path,
+        *,
+        name: str,
+        manual_version: typing.Optional[str] = None,
+        vcsver_enabled: bool = True,
+    ) -> None:
+        util.render_template(
+            'setup.cfg',
+            project_dir / 'setup.cfg',
+            context={
+                'name': name,
+                'version': manual_version,
+            },
+        )
+
+        util.render_template(
+            'pyproject.toml',
+            project_dir / 'pyproject.toml',
+            context={
+                'vcsver_wheel_path': self.vcsver_wheel_path,
+                'vcsver_enabled': vcsver_enabled,
+            },
+        )
+
+    def build(
+        self,
+        project_dir: pathlib.Path,
+    ) -> None:
+        util.run(
+            sys.executable,
+            '-m', 'build',
             check=True,
             cwd=str(project_dir),
         )

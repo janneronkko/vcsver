@@ -9,4 +9,5 @@ pytest
 pytest-cov
 pytest-mock
 pytest-subprocess
+types-toml
 wheel
