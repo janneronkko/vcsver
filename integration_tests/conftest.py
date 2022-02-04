@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import pathlib
+import os
 import typing
 
+import filelock
 import pytest
 
 from .version_generation_test import VersionGenerationTest
@@ -41,8 +43,32 @@ def pytest_addoption(parser):
 )
 def _get_vcsver_wheel_path(
     tmpdir_factory,
+    worker_id,
 ):
-    return vcsver_wheel_factory.VcsverWheelFactory(tmpdir_factory)
+    get_vcsver_wheel_path = vcsver_wheel_factory.VcsverWheelFactory(tmpdir_factory)
+    if worker_id == 'master':
+        return get_vcsver_wheel_path
+
+    vcsver_wheel_path_file_path = os.path.normpath(os.path.join(
+        tmpdir_factory.getbasetemp(),
+        '..',
+        'vcsver-wheel',
+    ))
+
+    def get() -> pathlib.Path:
+        with filelock.FileLock(f'{vcsver_wheel_path_file_path}.lock'):  # pylint: disable=abstract-class-instantiated
+            try:
+                with open(vcsver_wheel_path_file_path, 'rt', encoding='utf-8') as vcsver_wheel_path_file:
+                    return pathlib.Path(vcsver_wheel_path_file.read())
+
+            except FileNotFoundError:
+                path = get_vcsver_wheel_path()
+                with open(vcsver_wheel_path_file_path, 'wt', encoding='utf-8') as vcsver_wheel_path_file:
+                    vcsver_wheel_path_file.write(str(path))
+
+                return path
+
+    return get
 
 
 @pytest.fixture

@@ -1,5 +1,6 @@
 ansicolors
 build
+filelock
 mako
 mypy
 packaging
@@ -9,5 +10,6 @@ pytest
 pytest-cov
 pytest-mock
 pytest-subprocess
+pytest-xdist
 types-toml
 wheel
