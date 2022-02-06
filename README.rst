@@ -160,33 +160,43 @@ API
 Functions
 ---------
 
-**vcsver.pep440.post**
-  Create version that uses *post* part for version between releases.
+.. code:: python
 
-  The version is created using the following rules:
+  def post(
+      version_info: types.VersionInfo,
+  ) -> str:
 
-  - :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
-      Released version
-  - :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
-      Released version with modified source tree
-  - :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post{distance}+{commit}`
-      Released version
-  - :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post{distance}+{commit}-dirty`
-      Released version with modified source tree
+Create version that uses *post* part for version between releases.
 
-**vcsver.pep440.post_with_dev**
-  Create version that uses *post* and *dev* parts for version between releases.
+The version is created using the following rules:
 
-  The version is created using the following rules:
+- :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
+    Released version
+- :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
+    Released version with modified source tree
+- :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post{distance}+{commit}`
+    Released version
+- :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post{distance}+{commit}-dirty`
+    Released version with modified source tree
 
-  - :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
-      Released version
-  - :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
-      Released version with modified source tree
-  - :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post0.dev{distance}+{commit}`
-      Released version
-  - :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post0.dev{distance}+{commit}-dirty`
-      Released version with modified source tree
+.. code:: python
+
+  def post_with_dev(
+      version_info: types.VersionInfo,
+  ) -> str:
+
+Create version that uses *post* and *dev* parts for version between releases.
+
+The version is created using the following rules:
+
+- :code:`distance == 0 and not dirty` ⇒ :code:`{latest_version}`
+    Released version
+- :code:`distance == 0 and dirty` ⇒ :code:`{latest_version+dirty}`
+    Released version with modified source tree
+- :code:`distance > 0 and not dirty` ⇒ :code:`{latest_version}.post0.dev{distance}+{commit}`
+    Released version
+- :code:`distance > 0 and dirty` ⇒ :code:`{latest_version+dirty}.post0.dev{distance}+{commit}-dirty`
+    Released version with modified source tree
 
 Classes
 -------
