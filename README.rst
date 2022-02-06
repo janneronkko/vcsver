@@ -162,6 +162,30 @@ Functions
 
 .. code:: python
 
+  def get_version(
+      root_version: str = '0',
+      read_revision_info: types.RevisionInfoReader = git.GitRevisionInfoReader(),
+      parse_tag: types.TagParser = lambda tag: tag,
+      create_version: types.VersionStringFactory = pep440.post,
+  ) -> str:
+
+Get version using *read_revision_info* or from Python's PKG-INFO file (to support building
+Python sdists).
+
+*Arguments*
+
+- **root_version**: Version string used as root version if no releases are found from VCS
+- **read_revision_info**: Callable that return *RevisionInfo* object based on VCS
+- **parse_tag**: Callable returning version string from tag found from VCS
+- **create_version**: Callable returning version string based on *VersionInfo*
+
+If *read_revision_info* returns :code:`None`, the :code:`distance` part of *RevisionInfo* is
+assumed to contain the amount of commit since start of history. In this case the value of
+:code:`root_version` is used as value for :code:`VersionInfo.latest_release` , i.e. *parse_tag*
+is not used for mapping the latest tag into version string.
+
+.. code:: python
+
   def post(
       version_info: types.VersionInfo,
   ) -> str:
@@ -252,3 +276,39 @@ Types
   - **dirty**: Is the source tree dirty (not exactly the same as the code in the current revision)
 
 *RevisionInfo* is information returned by VCS readers and is turned into *VersionInfo* using the *parse_tag* function.
+
+**RevisionInfoReader**
+
+.. code:: python
+
+  typing.Callable[
+      [],
+      typing.Optional[RevisionInfo],
+  ]
+
+**RevisionInfoReaderFactory**
+
+.. code:: python
+
+  typing.Callable[
+      [],
+      RevisionInfoReader,
+  ]
+
+**TagParser**
+
+.. code:: python
+
+  typing.Callable[
+      [str],
+      str,
+  ]
+
+**VersionStringFactory**
+
+.. code:: python
+
+  typing.Callable[
+      [VersionInfo],
+      str,
+  ]

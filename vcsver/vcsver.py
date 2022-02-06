@@ -1,15 +1,17 @@
 import typing
 
 from . import errors
+from . import git
+from . import pep440
 from . import types
 from . import util
 
 
 def get_version(
-    root_version: str,
-    read_revision_info: types.RevisionInfoReader,
-    parse_tag: types.TagParser,
-    create_version: types.VersionStringFactory,
+    root_version: str = '0',
+    read_revision_info: types.RevisionInfoReader = git.GitRevisionInfoReader(),
+    parse_tag: types.TagParser = lambda tag: tag,
+    create_version: types.VersionStringFactory = pep440.post,
 ) -> str:
     revision_info = read_revision_info()
 
