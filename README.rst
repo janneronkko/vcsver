@@ -2,15 +2,18 @@
 vcsver
 ======
 
-About
-=====
+Overview
+========
 
-A package allowing generating PEP-440 compatible version numbers based on
-version control system. The goal is that each commit has unique version number
-that can be traced back to the commit easily.
+Automate your project's version numbering; just create annotated tag in Git and
+always have correct version number with your built packages. You don't need to
+spend time updating version numbers in source code anymore, just tag and you are
+good to go. And you are always able to go back to the commit from which a package
+has been built.
 
-Currently only git is supported but it is possible to add support for other
-version control systems.
+Currently only Git and PEP-440 compatible version numbers with setuptools are
+supported but the design allows adding other version control systems and other
+versioning schemes.
 
 Usage
 =====
