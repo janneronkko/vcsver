@@ -18,10 +18,17 @@ versioning schemes.
 Usage
 =====
 
-To enable automatic version in PEP 517 compatible way, configure source for versions
-in *tool.vcsver* table in *pyproject.toml*:
+To enable automatic version in PEP 517 compatible way with setuptools, add the following
+to *pyproject.toml*:
 
 .. code:: toml
+
+  [build-system]
+  requires = [
+    "setuptools",
+    "vcsver",
+  ]
+  build-backend = "setuptools.build_meta"
 
   [tool.vcsver]
   source = "git"
