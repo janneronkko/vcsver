@@ -75,6 +75,8 @@ pytest-subprocess==1.4.1
     # via -r requirements/qa.in
 pytest-xdist==2.5.0
     # via -r requirements/qa.in
+toml==0.10.2
+    # via -r requirements/qa.in
 tomli==2.0.1
     # via
     #   build
