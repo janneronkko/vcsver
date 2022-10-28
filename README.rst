@@ -319,3 +319,27 @@ Types
       [VersionInfo],
       str,
   ]
+
+Contributing
+============
+
+You can create PRs in GitHub.
+
+Currently there is no CI but you can run tests and checks using `tox`; you should at least run static analyzers
+(mypy, pycodestyle and pylint) and tests (unit tests and integration tests) for the latest Python version. For example,
+to run static analyzers and tests with Python 3.10, run
+
+```
+tox -emypy -epycodestyle -epylint -epy310-unittest -epy310-integrationtest
+```
+
+Quick Checklist For Your Change
+-------------------------------
+
+- Tests and checks pass
+- Tests are added/modified for changes
+- Commit messages have subject line and description (if needed) that use present tense
+- Commits are logical changes (rewrite history, i.e. `git rebase -i`, when fixing review findings)
+
+If you are not familiar with history rewriting, juts push new commits and ask someone to squash the commits into
+logical pieces.
