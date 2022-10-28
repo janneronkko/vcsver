@@ -329,9 +329,9 @@ Currently there is no CI but you can run tests and checks using `tox`; you shoul
 (mypy, pycodestyle and pylint) and tests (unit tests and integration tests) for the latest Python version. For example,
 to run static analyzers and tests with Python 3.10, run
 
-```
-tox -emypy -epycodestyle -epylint -epy310-unittest -epy310-integrationtest
-```
+.. code:: shell
+
+  tox -emypy -epycodestyle -epylint -epy310-unittest -epy310-integrationtest
 
 Quick Checklist For Your Change
 -------------------------------
