@@ -341,5 +341,5 @@ Quick Checklist For Your Change
 - Commit messages have subject line and description (if needed) that use present tense
 - Commits are logical changes (rewrite history, i.e. `git rebase -i`, when fixing review findings)
 
-If you are not familiar with history rewriting, juts push new commits and ask someone to squash the commits into
+If you are not familiar with history rewriting, push the new commits and ask someone to squash the commits into
 logical pieces.
