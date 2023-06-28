@@ -98,7 +98,29 @@ class VersionGenerationTest:
 
         with tempfile.TemporaryDirectory() as temp_dir:
             with tarfile.open(str(sdist_tarbal_path), 'r') as sdist_tarbal:
-                sdist_tarbal.extractall(temp_dir)
+                
+                import os
+                
+                def is_within_directory(directory, target):
+                    
+                    abs_directory = os.path.abspath(directory)
+                    abs_target = os.path.abspath(target)
+                
+                    prefix = os.path.commonprefix([abs_directory, abs_target])
+                    
+                    return prefix == abs_directory
+                
+                def safe_extract(tar, path=".", members=None, *, numeric_owner=False):
+                
+                    for member in tar.getmembers():
+                        member_path = os.path.join(path, member.name)
+                        if not is_within_directory(path, member_path):
+                            raise Exception("Attempted Path Traversal in Tar File")
+                
+                    tar.extractall(path, members, numeric_owner=numeric_owner) 
+                    
+                
+                safe_extract(sdist_tarbal, temp_dir)
 
             # .removesuffix is added in Python 3.9, i.e. when support for Python 3.8 is dropped, this can be
             # updated to use .removesuffix
